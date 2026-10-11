@@ -1,15 +1,15 @@
-FRESH PROJECT QA STATUS
+PUBLIC SITE SOURCE AUDIT — 2026-10-11
 
-Completed:
-- Rebuilt as a clean, independent Next.js source tree; no previous source files were patched in place.
-- New responsive marketing design, CSS motion, mobile navigation, reduced-motion support, membership marketing, school and contact pages.
-- Preserved the existing official Teens2Inspire logo and favicon assets.
-- TypeScript/TSX syntax transpilation check passed (no syntax diagnostics).
-- package.json parses as valid JSON.
+Verified from source:
+- Routes: /, /join, /schools, /contact, /privacy, /terms, and a custom not-found page.
+- Marketing page includes CSS motion and reduced-motion handling.
+- Membership prices match the known Personal ($7.99/month) and Family ($9.99/month) plans.
+- Login and library links point to media.teens2inspire.org.
+- Public project does not require a Supabase service-role key.
 
-Not verified / launch blockers:
-- Full npm install and `npm run build` could not be completed in this environment because npm install timed out while trying to reach the package registry.
-- Signup links to the separate media app; production signup, checkout, Stripe webhook, email verification and account recovery must be exercised against the real configured services.
-- This site does not contain the member media library; that belongs on media.teens2inspire.org.
+Not verified:
+- Live browser/HTTP route checks could not be completed because Vercel deployment access returned 403 and public fetch redirected to an inaccessible www host.
+- npm install/build could not be run because the npm registry hostname did not resolve.
+- Signup and checkout require end-to-end tests with real Auth/Stripe configuration.
 
-Do not call this production-ready until dependency install, build, and end-to-end integration tests pass.
+Do not call production-ready until a networked build and browser integration tests pass.

@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Events(){return <main className="simple-page"><a href="/" className="simple-brand">Teens2Inspire</a><div className="simple-card"><span className="section-kicker">GATHER & CONNECT</span><h1>Teens2Inspire <em>events.</em></h1><p>Information about upcoming events and community programs will be shared here as details are confirmed.</p><p>For event questions or partnership inquiries, email <a href="mailto:teens2inspire@gmail.com">teens2inspire@gmail.com</a>.</p><p><Link href="/">← Back to home</Link></p></div></main>}
