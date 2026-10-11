@@ -1,2 +1,0 @@
-import Link from "next/link";
-export default function Terms() { return <main className="simple-page"><div className="simple-card"><span className="section-kicker">TEENS2INSPIRE / TERMS</span><h1>Using Teens2Inspire.</h1><p>Access to the member library is subject to the membership plan or school entitlement shown at signup. Do not share account credentials or redistribute member-only content.</p><p>This is a placeholder overview, not a final legal agreement. Add the approved terms before accepting paid memberships.</p><Link href="/">← Back home</Link></div></main>; }
