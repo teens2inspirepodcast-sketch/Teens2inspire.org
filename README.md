@@ -20,3 +20,6 @@ This ZIP is the **main marketing and account website** for Teens2Inspire.org. It
 
 ## Important
 This is a separated project package, not a claim that production deployment or end-to-end tests have passed. Verify the build and every integration before launch. The media app is supplied separately as `teens2inspire-media.zip`.
+
+## Build-log fix included
+This package includes `src/components/pwa-register.tsx`, which was missing while imported by `src/app/layout.tsx` in the failed build log.
