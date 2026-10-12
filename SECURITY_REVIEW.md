@@ -1,11 +1,11 @@
 # Security and launch checks — Main Website
 
-Before launch:
-- Keep service-role keys and Stripe secrets server-only; never use `NEXT_PUBLIC_` for secrets.
+- Keep service-role keys and Stripe secrets server-only; never prefix secrets with `NEXT_PUBLIC_`.
 - Confirm Supabase RLS is enabled and tested for every table.
-- Validate school-code redemption against server-side rules, expiry, use limits, and authenticated identity.
-- Verify Stripe webhook signatures, idempotency, subscription state sync, and price IDs.
+- Verify email confirmation and the shared-domain auth cookie flow between the marketing site and media app.
+- Validate school-code redemption server-side for expiry, use limits, and authenticated identity.
+- Verify Stripe webhook signatures, event idempotency, subscription-state sync, and price IDs.
 - Add rate limiting / bot protection to public contact and redemption endpoints.
-- Verify email confirmation, password reset, session expiry, and account deletion workflows.
+- Test sign-up, login, reset/recovery, session expiry, account deletion, and cross-domain navigation.
+- Confirm public pages never expose private media URLs.
 - Run `npm install`, `npm run build`, and end-to-end tests in the actual deployment environment.
-- Confirm public website pages never expose private media URLs.

@@ -1,5 +1,67 @@
 import Link from "next/link";
-export function Header(){return <header className="site-header"><Link className="brand" href="/">Teens<span>2</span>Inspire</Link><nav className="nav"><Link href="/about">About</Link><Link href="/events">Events</Link><Link href="/school">For Schools</Link><Link href="/contact">Contact</Link></nav><div style={{display:"flex",gap:8}}><Link className="btn secondary" href="/login">Sign in</Link><Link className="btn primary" href="/signup">Join</Link></div></header>}
-export function Footer(){return <footer className="footer"><span>© {new Date().getFullYear()} Teens2Inspire</span><span>Inspiring Jewish teen girls</span><Link href="/contact">Contact</Link></footer>}
-export function Page({title,children}:{title:string;children:React.ReactNode}){return <><Header/><main className="page"><div className="eyebrow">TEENS2INSPIRE</div><h1 style={{fontSize:"clamp(40px,5vw,60px)"}}>{title}</h1>{children}</main><Footer/></>}
-export function Home(){return <><Header/><main><section className="hero"><div><div className="eyebrow">A place to discover & grow</div><h1>Inspiring Jewish<br/>teen girls.</h1><p className="lead">A thoughtful, kosher media space filled with stories, conversations, and inspiration you can actually relate to.</p><div className="actions"><Link className="btn primary" href="/signup">Join Teens2Inspire</Link><Link className="btn secondary" href="/about">Get to know us</Link></div><p style={{fontSize:12,color:"#89777e"}}>A curated space. Meaningful media. Made for you.</p></div><div className="poster"><div className="poster-copy"><div className="eyebrow" style={{color:"#f0d5df"}}>TEENS2INSPIRE ORIGINALS</div><h2>Stories that<br/>stay with you.</h2></div></div></section><section className="section"><div className="eyebrow">MORE THAN A PODCAST</div><h2>A space that feels like yours.</h2><p className="lead">Meaningful media in one carefully curated place — without the noise of social media.</p><div className="grid"><article className="card"><div className="eyebrow">01 / WATCH</div><h3>Watch & listen</h3><p>Conversations, video episodes, podcasts, and original content you can return to.</p></article><article className="card"><div className="eyebrow">02 / DISCOVER</div><h3>Find your next favorite</h3><p>Explore collections on friendship, growth, Shabbos, emunah, and more.</p></article><article className="card"><div className="eyebrow">03 / CURATED</div><h3>Created with care</h3><p>A kosher, intentionally curated media environment built around inspiration.</p></article></div></section><section className="section"><div className="panel"><h2>Come find something that speaks to you.</h2><p>Join the community, then open the media app to explore the library.</p><Link className="btn primary" href="/signup">Get started</Link></div></section></main><Footer/></>}
+import Image from "next/image";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, Headphones, Play, BookOpen, Heart } from "lucide-react";
+import { Header } from "@/components/site-header";
+import { Reveal } from "@/components/reveal";
+import { createClient } from "@/lib/supabase/server";
+
+type PreviewItem = { id: string; title: string; description?: string | null; type: string; cover_url?: string | null };
+
+export function Footer() {
+  return <footer className="marketing-footer"><div className="footer-top"><Link className="wordmark-logo-wrap footer-logo-wrap" href="/"><Image className="wordmark-logo" src="/teens2inspire-logo.png" alt="Teens2Inspire — a media platform for Jewish teen girls" width={520} height={130} /></Link><p>A little inspiration can change the way a day feels.</p><Link className="footer-cta" href="https://media.teens2inspire.org/">Enter the media app <ArrowUpRight size={16}/></Link></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Teens2Inspire</span><span>Made with intention.</span><div><Link href="/contact">Contact</Link><Link href="/school">School access</Link><Link href="/membership">Membership</Link></div></div></footer>;
+}
+
+export function Page({ title, children }: { title: string; children: React.ReactNode }) {
+  return <><Header/><main className="inner-page"><div className="inner-page-glow"/><div className="inner-page-content"><div className="eyebrow"><span className="eyebrow-dot"/> TEENS2INSPIRE / THE STORY</div><h1>{title}</h1><div className="inner-copy">{children}</div></div></main><Footer/></>;
+}
+
+async function getPreviewItems(): Promise<PreviewItem[]> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.from("content").select("id,title,description,type,cover_url").eq("status", "published").order("published_at", { ascending: false }).limit(3);
+    return (data || []) as PreviewItem[];
+  } catch { return []; }
+}
+
+export async function Home() {
+  const previews = await getPreviewItems();
+  return <><Header/><main className="marketing-main">
+    <section className="hero-dark">
+      <div className="hero-grain" aria-hidden="true"/><div className="hero-orbit hero-orbit-one"/><div className="hero-orbit hero-orbit-two"/>
+      <div className="hero-copy">
+        <div className="eyebrow hero-eyebrow"><span className="eyebrow-dot"/> A WORLD OF YOUR OWN</div>
+        <h1>Good things<br/>stay <em>with you.</em></h1>
+        <p className="hero-description">A thoughtful media space for Jewish teen girls. Real conversations, fresh perspectives, and inspiration for wherever life finds you.</p>
+        <div className="hero-actions"><Link className="button button-pink button-large" href="/signup">Find your next favorite <ArrowUpRight size={17}/></Link><Link className="text-link" href="/about">A little about us <ArrowRight size={16}/></Link></div>
+        <div className="hero-note"><span className="note-line"/> A curated space. No social feed. Just meaningful media.</div>
+      </div>
+      <div className="hero-art" aria-label="A preview of the Teens2Inspire media experience">
+        <div className="art-halo"/>
+        <div className="preview-device">
+          <div className="preview-top"><span className="preview-logo">Teens<span>2</span>Inspire</span><span className="preview-profile"/></div>
+          <div className="preview-feature" style={previews[0]?.cover_url ? { backgroundImage: `linear-gradient(0deg,rgba(24,9,17,.88),rgba(24,9,17,.04) 75%),url("${previews[0].cover_url}")` } : undefined}>
+            <div className="preview-feature-copy"><span className="preview-kicker">{previews[0] ? "FEATURED" : "YOUR LIBRARY"}</span><h2>{previews[0]?.title || "A little inspiration, all in one place."}</h2><span className="preview-watch"><Play size={12} fill="currentColor"/> {previews[0] ? "Explore the story" : "Discover the library"}</span></div>
+          </div>
+          <div className="preview-shelf-head"><span>Picked for you</span><span className="preview-view-all">VIEW ALL</span></div>
+          {previews.length ? <div className="preview-cards">{previews.slice(0,3).map((item,i)=><div className="preview-card" key={item.id}><div className={`preview-cover cover-tone-${i}`} style={item.cover_url ? {backgroundImage:`linear-gradient(0deg,#210d18aa,transparent),url("${item.cover_url}")`} : undefined}/><span>{item.title}</span></div>)}</div> : <div className="preview-empty"><span className="preview-empty-mark"/><span>Published episodes and stories will appear here.</span></div>}
+          <div className="preview-bottom"><span className="active">Discover</span><span>Search</span><span>My list</span><span>Profile</span></div>
+        </div>
+        <div className="floating-note floating-note-top"><span className="floating-note-mark"><Heart size={15}/></span><span><b>Made for your season</b><small>Thoughtful, never noisy.</small></span></div>
+        <div className="floating-note floating-note-bottom"><span className="floating-note-mark"><Headphones size={15}/></span><span><b>Watch. Listen. Read.</b><small>One place to come back to.</small></span></div>
+      </div>
+      <a className="scroll-cue" href="#the-feeling"><span>SCROLL TO EXPLORE</span><ArrowDownRight size={16}/></a>
+    </section>
+
+    <section className="manifesto-section" id="the-feeling"><Reveal><div className="eyebrow dark-eyebrow"><span className="eyebrow-dot"/> A DIFFERENT KIND OF SPACE</div><h2>Less noise.<br/><em>More of what matters.</em></h2><p className="manifesto-lead">The internet moves fast. This is a place to slow down, find something that speaks to you, and leave with a little more than you came with.</p></Reveal><Reveal className="manifesto-side" delay={120}><div className="manifesto-number">01 <span>—</span> 03</div><p>Created with Jewish teen girls in mind. Curated with care. Built around the things that make real life feel a little clearer.</p><Link className="dark-link" href="/about">Get to know Teens2Inspire <ArrowUpRight size={16}/></Link></Reveal></section>
+
+    <section className="experience-section"><Reveal className="section-heading"><div><div className="eyebrow"><span className="eyebrow-dot"/> FIND YOUR KIND OF INSPIRATION</div><h2>Whatever you need<br/>a little more of.</h2></div><p>Pick up a new perspective, revisit a conversation, or discover something you didn't know you needed.</p></Reveal>
+      <div className="experience-grid">
+        <Reveal className="experience-card experience-watch" delay={30}><div className="experience-card-top"><span>01 / WATCH</span><Play size={17}/></div><div className="experience-art art-watch"><div className="art-window"><span>REAL TALK</span><b>Conversations<br/>that stay.</b><i>TEENS2INSPIRE ORIGINALS</i></div></div><div className="experience-card-copy"><h3>See it from a new angle.</h3><p>Honest conversations and original video stories.</p></div></Reveal>
+        <Reveal className="experience-card experience-listen" delay={120}><div className="experience-card-top"><span>02 / LISTEN</span><Headphones size={17}/></div><div className="experience-art art-listen"><div className="sound-rings"><i/><i/><i/><i/><i/><i/><i/></div><span className="art-label">TAKE A MOMENT</span></div><div className="experience-card-copy"><h3>Take it with you.</h3><p>Thoughtful audio for the walk, the ride, or a quiet minute.</p></div></Reveal>
+        <Reveal className="experience-card experience-read" delay={210}><div className="experience-card-top"><span>03 / READ</span><BookOpen size={17}/></div><div className="experience-art art-read"><div className="reading-page"><span>NOTES TO SELF</span><b>Small reminders.<br/>Big meaning.</b><i>ON GROWING, GENTLY</i></div></div><div className="experience-card-copy"><h3>Keep the words close.</h3><p>Ideas, resources, and reminders worth returning to.</p></div></Reveal>
+      </div>
+    </section>
+
+    <section className="app-invite-section"><div className="invite-glow"/><Reveal className="invite-copy"><div className="eyebrow"><span className="eyebrow-dot"/> YOUR NEXT FAVORITE IS WAITING</div><h2>Come for a minute.<br/><em>Stay for the feeling.</em></h2><p>Explore a growing library of meaningful media, saved in one place and ready whenever you are.</p><div className="hero-actions"><Link className="button button-pink button-large" href="/signup">Join Teens2Inspire <ArrowUpRight size={17}/></Link><Link className="text-link" href="https://media.teens2inspire.org/">Already a member? Open the app <ArrowRight size={16}/></Link></div></Reveal><Reveal className="invite-stamp" delay={120}><div className="stamp-ring"><span>INSPIRING</span><b>Jewish<br/>teen girls</b><span>EVERY DAY, A LITTLE</span></div></Reveal></section>
+  </main><Footer/></>;
+}

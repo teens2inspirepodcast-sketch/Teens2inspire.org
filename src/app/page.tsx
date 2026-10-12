@@ -1,1 +1,3 @@
-import {Home} from "@/components/site"; export default function Index(){return <Home/>}
+import { Home } from "@/components/site";
+export const dynamic = "force-dynamic";
+export default function Index() { return <Home />; }

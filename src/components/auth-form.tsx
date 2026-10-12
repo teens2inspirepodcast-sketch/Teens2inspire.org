@@ -19,9 +19,10 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error;
         const rawNext = new URLSearchParams(location.search).get("next") || "/app";
         const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/app";
-        if (location.hostname === "media.teens2inspire.org" || location.hostname === "localhost") location.assign(next);
+        const configuredMediaOrigin = process.env.NEXT_PUBLIC_MEDIA_URL;
+        const mediaOrigin = configuredMediaOrigin || (location.hostname === "localhost" ? "http://localhost:3001" : "https://media.teens2inspire.org");
+        if (location.origin === new URL(mediaOrigin).origin) location.assign(next);
         else {
-          const mediaOrigin = process.env.NEXT_PUBLIC_MEDIA_URL || "https://media.teens2inspire.org";
           const mediaPath = next === "/app" ? "/" : next;
           location.assign(new URL(mediaPath, mediaOrigin).toString());
         }
@@ -29,5 +30,5 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
     } catch (error) { setMsg(error instanceof Error ? error.message : "Authentication failed."); }
     finally { setBusy(false); }
   }
-  return <form onSubmit={submit}><label>Email address</label><input name="email" type="email" required autoComplete="email"/><label>Password (at least 8 characters)</label><input name="password" type="password" required minLength={8} autoComplete={mode === "signup" ? "new-password" : "current-password"}/>{msg && <div className="notice" role="status">{msg}</div>}<button className="btn primary" style={{ width: "100%", marginTop: 20 }} disabled={busy}>{busy ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}</button><p style={{ fontSize: 13 }}>{mode === "signup" ? "Already have an account? " : "Need an account? "}<Link href={mode === "signup" ? "/login" : "/signup"}>{mode === "signup" ? "Sign in" : "Sign up"}</Link></p></form>;
+  return <form onSubmit={submit}><label htmlFor="auth-email">Email address</label><input id="auth-email" name="email" type="email" required autoComplete="email"/><label htmlFor="auth-password">Password (at least 8 characters)</label><input id="auth-password" name="password" type="password" required minLength={8} autoComplete={mode === "signup" ? "new-password" : "current-password"}/>{msg && <div className="notice" role="status">{msg}</div>}<button className="btn primary" style={{ width: "100%", marginTop: 20 }} disabled={busy}>{busy ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}</button><p style={{ fontSize: 13 }}>{mode === "signup" ? "Already have an account? " : "Need an account? "}<Link href={mode === "signup" ? "/login" : "/signup"}>{mode === "signup" ? "Sign in" : "Sign up"}</Link></p></form>;
 }
