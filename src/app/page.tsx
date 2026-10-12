@@ -1,0 +1,1 @@
+import {Home} from "@/components/site"; export default function Index(){return <Home/>}
