@@ -22,7 +22,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
     const email = String(form.get("email") || "").trim().toLowerCase();
     const password = String(form.get("password") || "");
     const plan = selectedPlan();
-    const membershipPath = plan ? `/membership?plan=${plan}` : "/membership";
+    const membershipPath = plan ? `/membership?plan=${plan}&autoCheckout=1` : "/membership";
 
     try {
       const supabase = createClient();

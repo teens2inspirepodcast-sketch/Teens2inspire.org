@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function MembershipCheckout({
   plan,
   label,
+  autoStart = false,
 }: {
   plan: "personal" | "family";
   label: string;
+  autoStart?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const autoStarted = useRef(false);
 
-  async function start() {
+  const start = useCallback(async () => {
     setBusy(true);
     setMessage("");
 
@@ -46,7 +49,14 @@ export function MembershipCheckout({
       setMessage(error instanceof Error ? error.message : "Checkout could not be started.");
       setBusy(false);
     }
-  }
+  }, [plan]);
+
+  useEffect(() => {
+    if (autoStart && !autoStarted.current) {
+      autoStarted.current = true;
+      void start();
+    }
+  }, [autoStart, start]);
 
   return (
     <div>

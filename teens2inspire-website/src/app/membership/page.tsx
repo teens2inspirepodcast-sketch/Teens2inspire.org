@@ -5,7 +5,7 @@ import Link from "next/link";
 export default async function Membership({
   searchParams,
 }: {
-  searchParams: Promise<{ checkout?: string; plan?: string }>;
+  searchParams: Promise<{ checkout?: string; plan?: string; autoCheckout?: string }>
 }) {
   const params = await searchParams;
 
@@ -30,13 +30,13 @@ export default async function Membership({
           <div className="eyebrow">PERSONAL</div>
           <h2>$7.99 <small>/ month</small></h2>
           <p>One profile for one listener or viewer.</p>
-          <MembershipCheckout plan="personal" label="Choose Personal" />
+          <MembershipCheckout plan="personal" label="Choose Personal" autoStart={params.autoCheckout === "1" && params.plan === "personal"} />
         </article>
         <article className={`card ${params.plan === "family" ? "featured-card" : ""}`}>
           <div className="eyebrow">FAMILY</div>
           <h2>$9.99 <small>/ month</small></h2>
           <p>Up to three profiles for your family.</p>
-          <MembershipCheckout plan="family" label="Choose Family" />
+          <MembershipCheckout plan="family" label="Choose Family" autoStart={params.autoCheckout === "1" && params.plan === "family"} />
         </article>
         <article className="card">
           <div className="eyebrow">SCHOOL ACCESS</div>
