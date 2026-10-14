@@ -37,3 +37,17 @@ The media app is supplied separately as `teens2inspire-media-redesigned.zip`.
 - Configure `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in Supabase Edge Function secrets. Point the Stripe webhook directly to `https://mphswidvmesdkefkgwjz.supabase.co/functions/v1/stripe-webhook`.
 - Required public Vercel variables are shown in `.env.example`.
 - The repair files are merged into this project ZIP, but a production build and live checkout still need to be tested after deployment.
+
+## Admin dashboard
+
+The marketing site includes a protected `/admin` workspace for administrator-role accounts. It displays membership records, content, events, schools, inquiries, and newsletter subscribers, and provides forms to create content, events, and school access codes. Access is checked on the server through the authenticated Supabase profile role; regular users are redirected away.
+
+### Enable the first administrator
+
+1. Apply `supabase/migrations/001_initial.sql` and `supabase/migrations/002_security_school_access.sql` in the connected Supabase project's SQL Editor.
+2. Create your account through the website and confirm it appears under **Authentication → Users**.
+3. Run the administrator role update shown in `supabase/ADMIN_SETUP.md`, replacing the example email with the exact email of your own account. Verify exactly one row changed.
+4. In Vercel, set `NEXT_PUBLIC_SUPABASE_URL` and either `NEXT_PUBLIC_SUPABASE_ANON_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in Production. The app prefers the anon-key variable if both are set.
+5. Redeploy the marketing-site project, then visit `https://teens2inspire.org/admin` while signed in with the administrator account.
+
+The dashboard deliberately does not provide a manual control to grant paid membership. Paid membership must follow verified Stripe webhook events. School-code access is managed separately.

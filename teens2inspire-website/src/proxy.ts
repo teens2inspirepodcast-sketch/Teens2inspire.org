@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (supabaseUrl && supabaseKey) {
     const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
     const trustedDomain = host === "teens2inspire.org" || host.endsWith(".teens2inspire.org");
@@ -29,7 +29,7 @@ export async function proxy(request: NextRequest) {
 
   const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
   const { pathname } = request.nextUrl;
-  if (host === "teens2inspire.org" && (pathname === "/app" || pathname.startsWith("/app/") || pathname === "/admin" || pathname.startsWith("/admin/") || ["/explore", "/search", "/library", "/profile"].includes(pathname))) {
+  if (host === "teens2inspire.org" && (pathname === "/app" || pathname.startsWith("/app/") || ["/explore", "/search", "/library", "/profile"].includes(pathname))) {
     const destination = new URL(`${pathname}${request.nextUrl.search}`, "https://media.teens2inspire.org");
     const redirected = NextResponse.redirect(destination);
     response.cookies.getAll().forEach(cookie => redirected.cookies.set(cookie));
