@@ -37,14 +37,23 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         if (!ageConfirmed) {
           throw new Error("Please confirm that you are at least 13 years old. If you are under 13, a parent or guardian must complete the required consent process before you can create an account.");
         }
+        const termsAccepted = form.get("accept-terms") === "on";
+        if (!termsAccepted) {
+          throw new Error("Please accept the Terms of Service and Privacy Policy to create an account.");
+        }
 
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: callback.toString(),
-            // The database signup trigger requires this explicit age-gate metadata.
-            data: { age_group: "13plus" },
+            // These values satisfy the database's signup checks. The terms timestamp
+            // is only sent after the user actively checks the required terms box.
+            data: {
+              age_group: "13plus",
+              accepted_terms_at: new Date().toISOString(),
+              membership_tier: plan || "personal",
+            },
           },
         });
 
@@ -100,15 +109,26 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
       <label htmlFor="auth-email">Email address</label>
       <input id="auth-email" name="email" type="email" required autoComplete="email" />
       {mode === "signup" && (
-        <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 16, fontSize: 13, lineHeight: 1.5 }}>
-          <input
-            name="age-13plus"
-            type="checkbox"
-            required
-            style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0 }}
-          />
-          <span>I confirm that I am at least 13 years old. If I am under 13, a parent or guardian must complete a verified consent process before an account can be created.</span>
-        </label>
+        <>
+          <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 16, fontSize: 13, lineHeight: 1.5 }}>
+            <input
+              name="age-13plus"
+              type="checkbox"
+              required
+              style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0 }}
+            />
+            <span>I confirm that I am at least 13 years old. If I am under 13, a parent or guardian must complete a verified consent process before an account can be created.</span>
+          </label>
+          <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 12, fontSize: 13, lineHeight: 1.5 }}>
+            <input
+              name="accept-terms"
+              type="checkbox"
+              required
+              style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0 }}
+            />
+            <span>I have read and agree to the Terms of Service and Privacy Policy.</span>
+          </label>
+        </>
       )}
       <label htmlFor="auth-password">Password (at least 8 characters)</label>
       <input
