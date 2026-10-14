@@ -33,10 +33,19 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         const callback = new URL("/auth/callback", marketingOrigin);
         callback.searchParams.set("next", membershipPath);
 
+        const ageConfirmed = form.get("age-13plus") === "on";
+        if (!ageConfirmed) {
+          throw new Error("Please confirm that you are at least 13 years old. If you are under 13, a parent or guardian must complete the required consent process before you can create an account.");
+        }
+
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: callback.toString() },
+          options: {
+            emailRedirectTo: callback.toString(),
+            // The database signup trigger requires this explicit age-gate metadata.
+            data: { age_group: "13plus" },
+          },
         });
 
         if (error) throw error;
@@ -90,6 +99,17 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
     <form onSubmit={submit}>
       <label htmlFor="auth-email">Email address</label>
       <input id="auth-email" name="email" type="email" required autoComplete="email" />
+      {mode === "signup" && (
+        <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 16, fontSize: 13, lineHeight: 1.5 }}>
+          <input
+            name="age-13plus"
+            type="checkbox"
+            required
+            style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0 }}
+          />
+          <span>I confirm that I am at least 13 years old. If I am under 13, a parent or guardian must complete a verified consent process before an account can be created.</span>
+        </label>
+      )}
       <label htmlFor="auth-password">Password (at least 8 characters)</label>
       <input
         id="auth-password"
