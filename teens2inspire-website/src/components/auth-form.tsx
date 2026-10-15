@@ -66,7 +66,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         }
 
         setMsg(
-          `Your account was created. Check your email to verify it, then you'll return to membership options: Personal ($7.99/month) or Family ($9.99/month).`
+          `Please check your inbox for a verification email and confirm your email address. After verification, you'll return to membership options and can continue to secure checkout for Personal ($7.99/month) or Family ($9.99/month). Your membership is not active until checkout is completed.`
         );
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });

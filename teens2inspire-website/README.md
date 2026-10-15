@@ -51,3 +51,9 @@ The marketing site includes a protected `/admin` workspace for administrator-rol
 5. Redeploy the marketing-site project, then visit `https://teens2inspire.org/admin` while signed in with the administrator account.
 
 The dashboard deliberately does not provide a manual control to grant paid membership. Paid membership must follow verified Stripe webhook events. School-code access is managed separately.
+
+## October 2026 repair notes
+- The header and footer logo are constrained responsively so the source image dimensions do not make the logo dominate the layout.
+- The home page includes the free RSS.com Teens2Inspire podcast player, with an external fallback link.
+- Signup confirmation copy explicitly says to verify email first and clarifies that paid membership is not active until Stripe checkout is completed.
+- Paid checkout still depends on the deployed Supabase `stripe-checkout` Edge Function and correct Stripe secrets/Price IDs. The production flow must be tested with a real test-mode or approved live-mode transaction before launch.

@@ -62,6 +62,19 @@ export async function Home() {
       </div>
     </section>
 
+    <section className="free-podcast-section" id="free-podcast">
+      <div className="free-podcast-copy">
+        <div className="eyebrow dark-eyebrow"><span className="eyebrow-dot"/> LISTEN FOR FREE</div>
+        <h2>The Teens2Inspire<br/><em>Podcast.</em></h2>
+        <p>Real conversations and meaningful inspiration for Jewish teen girls. Listen here for free, no membership required.</p>
+        <a className="dark-link" href="https://rss.com/podcasts/teens2inspire" target="_blank" rel="noreferrer">Open the podcast page <ArrowUpRight size={16}/></a>
+      </div>
+      <div className="free-podcast-player">
+        <iframe src="https://player.rss.com/teens2inspire?theme=light&v=2" title="Teens2Inspire Podcast — free episodes" width="100%" height="393" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen scrolling="no" />
+        <p>If the player doesn't load, <a href="https://rss.com/podcasts/teens2inspire" target="_blank" rel="noreferrer">listen on RSS.com</a>.</p>
+      </div>
+    </section>
+
     <section className="app-invite-section"><div className="invite-glow"/><Reveal className="invite-copy"><div className="eyebrow"><span className="eyebrow-dot"/> YOUR NEXT FAVORITE IS WAITING</div><h2>Come for a minute.<br/><em>Stay for the feeling.</em></h2><p>Explore a growing library of meaningful media, saved in one place and ready whenever you are.</p><div className="hero-actions"><Link className="button button-pink button-large" href="/signup">Join Teens2Inspire <ArrowUpRight size={17}/></Link><Link className="text-link" href="https://media.teens2inspire.org/">Already a member? Open the app <ArrowRight size={16}/></Link></div></Reveal><Reveal className="invite-stamp" delay={120}><div className="stamp-ring"><span>INSPIRING</span><b>Jewish<br/>teen girls</b><span>EVERY DAY, A LITTLE</span></div></Reveal></section>
   </main><Footer/></>;
 }
