@@ -11,6 +11,7 @@ export function Header() {
     <Link className="wordmark-logo-wrap" href="/" aria-label="Teens2Inspire home"><Image className="wordmark-logo" src="/teens2inspire-logo.png" alt="Teens2Inspire — a media platform for Jewish teen girls" width={520} height={130} priority /></Link>
     <nav className={`marketing-nav${open ? " is-open" : ""}`} aria-label="Main navigation">
       <Link href="/about" onClick={() => setOpen(false)}>Our story</Link>
+      <Link href="/podcast" onClick={() => setOpen(false)}>Podcast</Link>
       <Link href="/events" onClick={() => setOpen(false)}>Events</Link>
       <Link href="/school" onClick={() => setOpen(false)}>For schools</Link>
       <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
