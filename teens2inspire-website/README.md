@@ -6,7 +6,7 @@ This is the **dark editorial marketing and account website** for `teens2inspire.
 - Dark near-black / burgundy canvas, restrained blush-pink accents, serif editorial headlines, and generous spacing.
 - Shared responsive header using the actual Teens2Inspire wordmark asset.
 - Cinematic hero, layered media-app preview, scroll-reveal sections, subtle parallax-like motion, hover transitions, and reduced-motion support.
-- The marketing site does not play media. It links members to the media app.
+- The marketing site is primarily for discovery, account creation, and membership checkout. Its Podcast page embeds the RSS.com episode archive so visitors can play podcast episodes directly on the site; the media app hosts the wider member library.
 - Preview content is loaded from published Supabase content when available; the empty state does not invent episode titles or covers.
 
 ## Included
@@ -54,6 +54,31 @@ The dashboard deliberately does not provide a manual control to grant paid membe
 
 ## October 2026 repair notes
 - The header and footer logo are constrained responsively so the source image dimensions do not make the logo dominate the layout.
-- The home page includes the free RSS.com Teens2Inspire podcast player, with an external fallback link.
+- The Podcast page includes an in-page RSS.com episode player, and episode cards jump directly to that player rather than sending visitors away from the site.
 - Signup confirmation copy explicitly says to verify email first and clarifies that paid membership is not active until Stripe checkout is completed.
 - Paid checkout still depends on the deployed Supabase `stripe-checkout` Edge Function and correct Stripe secrets/Price IDs. The production flow must be tested with a real test-mode or approved live-mode transaction before launch.
+
+## Supabase school-code compatibility repair
+
+A compatibility migration is included at
+`supabase/migrations/003_repair_school_admin_schema_compatibility.sql`. The follow-up `004_live_schema_compatibility.sql` adds the missing `redeem_school_code` function, profile email sync, and the `events`/`inquiries` tables required by the marketing admin and contact forms.
+It aligns the live schema with the admin form's `schools` and `school_codes`
+operations, adds the newsletter table expected by this site's admin page, and
+keeps administrator-only access enforced with row-level security.
+
+The connected Supabase project has already had this migration applied and the
+school/code insert flow passed a database smoke test. For another environment,
+apply migrations in order and confirm the admin account has the `administrator`
+role before testing school-code creation.
+
+
+### Security compatibility migration
+Apply `supabase/migrations/005_security_hardening.sql` after the earlier migrations. It restricts trigger-only SECURITY DEFINER functions from direct RPC use, adds administrator-only policies to legacy school-code/video-asset tables, and disables obsolete school-code RPC overloads not used by the current apps. The connected Supabase project has this migration applied.
+
+
+### Family-profile compatibility
+The shared Supabase schema's family-profile mutations are restricted to guarded database functions. The media app's `006_restore_guarded_family_profile_rpcs.sql` migration aligns legacy column names and grants only authenticated execution to the ownership- and entitlement-checking functions. Apply the media app migrations through `006` to the shared project.
+
+
+### Fresh-install schema compatibility
+Migration `007_complete_app_schema.sql` brings older base migrations up to the current shared app schema, including section metadata, content metadata, categories, billing tables, Stripe webhook idempotency records, and current content-access policies. Apply the shared migrations in numeric order through `007` before configuring production credentials.

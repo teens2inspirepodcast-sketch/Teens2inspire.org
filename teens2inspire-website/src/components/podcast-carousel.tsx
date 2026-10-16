@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Headphones } from "lucide-react";
+import { ArrowLeft, ArrowRight, Headphones } from "lucide-react";
 
 const episodes = [
-  { number: "09", label: "CAMP EDITION", title: "Camp Must-Haves 2026", guest: "Teens2Inspire Camp Edition", topic: "Camp & Lifestyle", description: "A camp-season episode with ideas to help you feel prepared and organized.", tone: "camp", date: "Jun 26, 2026" },
+  { number: "✦", label: "SPECIAL", title: "Camp Must-Haves 2026", guest: "Teens2Inspire Camp Edition", topic: "Camp & Lifestyle", description: "A camp-season episode with ideas to help you feel prepared and organized.", tone: "camp", date: "Jun 26, 2026" },
   { number: "09", label: "S1 · E9", title: "The Finals Episode", guest: "ft. Chana Raff & Talya Gabay", topic: "School & Mindset", description: "Study pressure, motivation, and finding a calmer way through finals season.", tone: "finals", date: "Apr 26, 2026" },
   { number: "08", label: "S1 · E8", title: "Emunah and Bitachon", guest: "ft. Reva Schreiber", topic: "Faith & Trust", description: "Building trust in Hashem and finding strength when life feels uncertain.", tone: "emunah", date: "Mar 27, 2026" },
   { number: "07", label: "S1 · E7", title: "Don’t Grow Up Too Fast", guest: "ft. Morah Tziri Preis", topic: "Growing Up", description: "Growing through challenges, discovering purpose, and lessons learned along the way.", tone: "growth", date: "Feb 18, 2026" },
@@ -30,7 +30,7 @@ export function PodcastCarousel() {
           <span className="episode-art-kicker">TEENS2INSPIRE PODCAST</span><span className="episode-art-number">{episode.number}</span><span className="episode-art-topic">{episode.topic}</span>
           <span className="episode-art-icon"><Headphones size={20} /></span>
         </div>
-        <div className="episode-card-copy"><div className="episode-meta"><span>{episode.label}</span><span>{episode.date}</span></div><h3>{episode.title}</h3><p className="episode-guest">{episode.guest}</p><p className="episode-description">{episode.description}</p><a href="https://rss.com/podcasts/teens2inspire" target="_blank" rel="noreferrer" className="episode-open">Open episode <ArrowUpRight size={15} /></a></div>
+        <div className="episode-card-copy"><div className="episode-meta"><span>{episode.label}</span><span>{episode.date}</span></div><h3>{episode.title}</h3><p className="episode-guest">{episode.guest}</p><p className="episode-description">{episode.description}</p><a href="#podcast-player" className="episode-open">Listen in player below <Headphones size={15} /></a></div>
       </article>)}
     </div>
     <p className="episode-carousel-note">Swipe to browse on mobile, or use the arrows to explore the collection. The full player below contains the live archive.</p>

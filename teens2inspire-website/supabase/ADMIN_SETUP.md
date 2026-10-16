@@ -1,6 +1,6 @@
 # Administrator and database setup
 
-1. In the correct Supabase project, apply `migrations/001_initial.sql`, then `migrations/002_security_school_access.sql`.
+1. In the correct Supabase project, apply migrations `001_initial.sql`, `002_security_school_access.sql`, `003_repair_school_admin_schema_compatibility.sql`, and `004_live_schema_compatibility.sql` in order. If the live compatibility migration was already applied through the Supabase dashboard, verify its objects before reapplying.
 2. Sign up through the website and verify the administrator email address.
 3. In the Supabase SQL Editor, run the following query with the exact email used for the admin account:
 

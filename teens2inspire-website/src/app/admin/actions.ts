@@ -21,7 +21,7 @@ export async function createContent(formData: FormData) {
   const type = text(formData, "type", 30);
   const category = text(formData, "category", 80);
   const coverUrl = text(formData, "cover_url", 1000);
-  const mediaProviderId = text(formData, "media_provider_id", 500);
+  const mediaProviderId = text(formData, "r2_media_key", 1024);
   const status = text(formData, "status", 20);
   const memberOnly = formData.get("member_only") === "on";
   if (!title) go("Add a title before saving content.");
@@ -37,7 +37,7 @@ export async function createContent(formData: FormData) {
   while (slugs.has(slug)) slug = `${slugBase}-${suffix++}`;
   const { error } = await supabase.from("content").insert({
     title, slug, description, type, category: category || null,
-    cover_url: coverUrl || null, media_provider_id: mediaProviderId || null,
+    cover_url: coverUrl || null, r2_media_key: mediaProviderId || null,
     member_only: memberOnly, status, featured: false,
     published_at: status === "published" ? new Date().toISOString() : null,
     created_by: user.id,
