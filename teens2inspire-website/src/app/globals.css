@@ -79,3 +79,12 @@
 @media(max-width:900px){.episode-carousel{grid-auto-columns:minmax(235px,calc((100% - 32px)/2.2))}.podcast-player-section{grid-template-columns:1fr}.podcast-player-copy>p{max-width:600px}}
 @media(max-width:760px){.podcast-hero{padding:72px 23px 65px}.podcast-hero h1{font-size:clamp(43px,11.5vw,66px);letter-spacing:-2.4px}.podcast-library{padding:65px 18px 70px}.podcast-library-heading{display:block;margin-bottom:28px}.podcast-library-heading h2{font-size:clamp(39px,10vw,56px)}.podcast-library-heading>p{margin-top:17px}.episode-carousel{grid-auto-columns:minmax(245px,78vw);gap:12px}.episode-art{aspect-ratio:1.5/1}.podcast-player-section{padding:70px 22px;gap:25px}.podcast-player-frame{padding:7px}.podcast-player-frame iframe{height:490px}}
 @media(prefers-reduced-motion:reduce){.episode-card{transition:none}}
+
+/* Teens2Inspire cinematic identity: controlled violet-rose light, premium contrast, mobile-safe controls. */
+:root{--cinema-black:#0b080d;--cinema-plum:#190d20;--cinema-violet:#63358c;--cinema-rose:#ef5b9a;--cinema-amber:#d9a46d;--cinema-line:rgba(255,255,255,.12);--cinema-muted:#b9aabf}
+html{background:var(--cinema-black)}
+body{background:var(--cinema-black);color:#f8f2fa}
+::selection{background:#d94f92;color:#fff}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #d77af0;outline-offset:3px}
+button,a,[role=button]{touch-action:manipulation}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
