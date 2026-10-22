@@ -66,7 +66,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         }
 
         setMsg(
-          `Please check your inbox for a verification email and confirm your email address. After verification, you'll return to membership options and can continue to secure checkout for Personal ($7.99/month) or Family ($9.99/month). Your membership is not active until checkout is completed.`
+          `Please check your inbox and confirm your email address. After confirmation, you will be sent to secure Stripe Checkout for the selected plan. If you did not select a plan, Personal ($7.99/month) will be selected by default. Your membership is not active until checkout is completed.`
         );
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -117,7 +117,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
               required
               style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0 }}
             />
-            <span>I confirm that I am at least 13 years old. If I am under 13, a parent or guardian must complete a verified consent process before an account can be created.</span>
+            <span>I confirm that I am at least 13 years old. If I am under 13, a parent or guardian allows me to create an account.</span>
           </label>
           <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 12, fontSize: 13, lineHeight: 1.5 }}>
             <input

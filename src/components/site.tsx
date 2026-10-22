@@ -35,16 +35,11 @@ export async function Home() {
         <div className="hero-actions"><Link className="button button-pink button-large" href="/signup">Find your next favorite <ArrowUpRight size={17}/></Link><Link className="text-link" href="/about">A little about us <ArrowRight size={16}/></Link></div>
         <div className="hero-note"><span className="note-line"/> A curated space. No social feed. Just meaningful media.</div>
       </div>
-      <div className="hero-art" aria-label="A preview of the Teens2Inspire media experience">
+      <div className="hero-art" aria-label="Live preview of the Teens2Inspire media app">
         <div className="art-halo"/>
-        <div className="preview-device">
-          <div className="preview-top"><span className="preview-logo">Teens<span>2</span>Inspire</span><span className="preview-profile"/></div>
-          <div className="preview-feature" style={previews[0]?.cover_url ? { backgroundImage: `linear-gradient(0deg,rgba(24,9,17,.88),rgba(24,9,17,.04) 75%),url("${previews[0].cover_url}")` } : undefined}>
-            <div className="preview-feature-copy"><span className="preview-kicker">{previews[0] ? "FEATURED" : "YOUR LIBRARY"}</span><h2>{previews[0]?.title || "A little inspiration, all in one place."}</h2><span className="preview-watch"><Play size={12} fill="currentColor"/> {previews[0] ? "Explore the story" : "Discover the library"}</span></div>
-          </div>
-          <div className="preview-shelf-head"><span>Picked for you</span><span className="preview-view-all">VIEW ALL</span></div>
-          {previews.length ? <div className="preview-cards">{previews.slice(0,3).map((item,i)=><div className="preview-card" key={item.id}><div className={`preview-cover cover-tone-${i}`} style={item.cover_url ? {backgroundImage:`linear-gradient(0deg,#210d18aa,transparent),url("${item.cover_url}")`} : undefined}/><span>{item.title}</span></div>)}</div> : <div className="preview-empty"><span className="preview-empty-mark"/><span>Published episodes and stories will appear here.</span></div>}
-          <div className="preview-bottom"><span className="active">Discover</span><span>Search</span><span>My list</span><span>Profile</span></div>
+        <div className="preview-device live-app-preview">
+          <div className="preview-live-heading"><span>TEENS2INSPIRE</span><a href="https://media.teens2inspire.org/" target="_blank" rel="noreferrer">Open app <ArrowUpRight size={13}/></a></div>
+          <iframe src="https://media.teens2inspire.org/" title="Live Teens2Inspire media app preview" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" />
         </div>
         <div className="floating-note floating-note-top"><span className="floating-note-mark"><Heart size={15}/></span><span><b>Made for your season</b><small>Thoughtful, never noisy.</small></span></div>
         <div className="floating-note floating-note-bottom"><span className="floating-note-mark"><Headphones size={15}/></span><span><b>Watch. Listen. Read.</b><small>One place to come back to.</small></span></div>

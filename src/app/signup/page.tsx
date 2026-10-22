@@ -9,7 +9,7 @@ export default async function Signup({
   searchParams: Promise<{ plan?: string }>;
 }) {
   const params = await searchParams;
-  const selectedPlan = params.plan === "family" ? "family" : params.plan === "personal" ? "personal" : null;
+  const selectedPlan = params.plan === "family" ? "family" : params.plan === "personal" ? "personal" : params.plan === "school" ? "school" : null;
 
   return (
     <>
@@ -49,9 +49,19 @@ export default async function Signup({
                 <em>Up to three profiles</em>
                 <b>{selectedPlan === "family" ? "Selected" : "Choose Family"}</b>
               </Link>
+              <Link
+                className={`signup-plan ${selectedPlan === "school" ? "selected" : ""}`}
+                href="/school"
+                aria-current={selectedPlan === "school" ? "page" : undefined}
+              >
+                <span>SCHOOL</span>
+                <strong>Free</strong>
+                <em>Free access for students through participating schools</em>
+                <b>Apply for school access</b>
+              </Link>
             </div>
             <p className="signup-school-note">
-              Need school access? <Link href="/school">Use your school code</Link>.
+              School access is free for students when a school is approved. <Link href="/school">School application</Link>.
             </p>
           </div>
 
