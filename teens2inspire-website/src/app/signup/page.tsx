@@ -26,7 +26,7 @@ export default async function Signup({
           <div className="signup-pricing">
             <div className="signup-pricing-heading">
               <span className="eyebrow">MEMBERSHIP OPTIONS</span>
-              <p>Choose now or decide after you verify your email.</p>
+              <p>Choose a plan. Paid plans continue to secure Stripe Checkout before email verification.</p>
             </div>
             <div className="signup-pricing-grid">
               <Link
@@ -51,23 +51,21 @@ export default async function Signup({
               </Link>
               <Link
                 className={`signup-plan ${selectedPlan === "school" ? "selected" : ""}`}
-                href="/school"
+                href="/signup?plan=school"
                 aria-current={selectedPlan === "school" ? "page" : undefined}
               >
                 <span>SCHOOL</span>
                 <strong>Free</strong>
                 <em>Free access for students through participating schools</em>
-                <b>Apply for school access</b>
+                <b>{selectedPlan === "school" ? "Selected" : "Enter school code"}</b>
               </Link>
             </div>
-            <p className="signup-school-note">
-              School access is free for students when a school is approved. <Link href="/school">School application</Link>.
-            </p>
+            <p className="signup-school-note">School access is free for students with a valid code from a participating school. Schools can still <Link href="/school">apply for access</Link>.</p>
           </div>
 
-          <div className="form auth-form"><AuthForm mode="signup" /></div>
+          <div className="form auth-form"><AuthForm mode="signup" initialPlan={selectedPlan} /></div>
           <p className="auth-fineprint">
-            You will not be charged unless you choose a paid plan and complete Stripe checkout.
+            Paid plans open secure Stripe Checkout before email verification. Your membership activates only after payment is confirmed.
           </p>
         </section>
       </main>

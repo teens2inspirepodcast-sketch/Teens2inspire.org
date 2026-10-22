@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 function safeNext(rawNext: string | null): string {
-  // If the email provider drops `next`, resume at checkout instead of a missing /app route.
-  const fallback = "/membership?plan=personal&autoCheckout=1";
+  // Checkout happens before email verification, so a dropped `next` returns to membership.
+  const fallback = "/membership";
   if (!rawNext || !rawNext.startsWith("/") || rawNext.startsWith("//")) return fallback;
 
   try {
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     return verificationError(url.origin, next);
   }
 
-  // /membership auto-starts Stripe Checkout for the selected paid plan.
+  // Return to the saved destination after email verification; checkout has already been started.
   return NextResponse.redirect(new URL(next, url.origin));
 }
 

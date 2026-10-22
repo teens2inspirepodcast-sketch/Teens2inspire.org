@@ -36,3 +36,10 @@ Audit date: 2026-10-21
 - The Terms and Privacy drafts should be reviewed by qualified counsel before launch.
 
 This archive is a release candidate, not a claim of fully verified production readiness.
+
+
+## Signup and checkout update (2026-10-22)
+- Personal and Family signup now starts Stripe Checkout immediately after Supabase creates the unverified account. Email confirmation is still required to access the account.
+- Signup accepts a discount code; the checkout Edge Function validates it against active Stripe promotion codes. If no code is supplied, Stripe Checkout allows a promotion code to be entered there.
+- School selection remains on the signup page and displays a school-code field. If email confirmation is required, the callback returns to the school page and attempts to redeem the supplied code after the session is established.
+- Deploy `supabase/functions/stripe-checkout/index.ts` with JWT verification disabled for this function only; the handler validates either a signed-in user or an exact matching unverified signup. Test duplicate signups, expired/invalid codes, successful payment, email verification, and webhook activation before launch.

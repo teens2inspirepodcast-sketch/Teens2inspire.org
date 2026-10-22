@@ -16,3 +16,17 @@ where p.id = u.id
 5. Sign in and verify `/admin` is accessible only to the administrator. Test with a normal user too.
 6. Use **School Access** in the admin dashboard to generate school codes. Each raw code is shown only once; store and distribute it securely. The database stores only its hash.
 7. Do not manually update membership status to simulate payment in production. Stripe webhook events should control paid membership state.
+
+## Signup-before-verification Stripe Checkout update
+
+The marketing signup flow now creates the Supabase signup, then opens Stripe Checkout before the user verifies their email. The `stripe-checkout` Edge Function must be updated to the checked-in source before this flow will work in production:
+
+1. Link the Supabase CLI to project `mphswidvmesdkefkgwjz` (or select the matching project in your normal deployment workflow).
+2. Ensure Edge Function secrets `STRIPE_SECRET_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` are configured in Supabase.
+3. Deploy the function with JWT verification disabled because this handler performs its own checks for either an authenticated user or an exact-match unverified signup:
+
+   `supabase functions deploy stripe-checkout --no-verify-jwt`
+
+4. Do not disable JWT verification on unrelated functions. Confirm the deployed function version and test a fresh signup, valid and invalid discount codes, checkout cancellation, payment success, and email confirmation. The Stripe webhook must remain active to grant paid membership.
+
+The site code alone does not deploy this Edge Function or change Vercel. Until the Edge Function is deployed, checkout-before-verification is not live.

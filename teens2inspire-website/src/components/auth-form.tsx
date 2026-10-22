@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-function selectedPlan(): "personal" | "family" | null {
+function selectedPlan(): "personal" | "family" | "school" | null {
   const value = new URLSearchParams(window.location.search).get("plan");
-  return value === "personal" || value === "family" ? value : null;
+  return value === "personal" || value === "family" || value === "school" ? value : null;
 }
 
-export function AuthForm({ mode }: { mode: "signup" | "login" }) {
+export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login"; initialPlan?: "personal" | "family" | "school" | null }) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -21,8 +21,15 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") || "").trim().toLowerCase();
     const password = String(form.get("password") || "");
-    const plan = selectedPlan();
-    const membershipPath = plan ? `/membership?plan=${plan}&autoCheckout=1` : "/membership";
+    const plan = initialPlan || selectedPlan();
+    const schoolCode = String(new FormData(e.currentTarget).get("school-code") || "").trim();
+    const discountCode = String(new FormData(e.currentTarget).get("discount-code") || "").trim();
+    const membershipPath = plan ? `/membership?plan=${plan}` : "/membership";
+    if (mode === "signup" && plan === "school" && !schoolCode) {
+      setMsg("Enter the school access code provided by your school.");
+      setBusy(false);
+      return;
+    }
 
     try {
       const supabase = createClient();
@@ -31,7 +38,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         const marketingOrigin =
           process.env.NEXT_PUBLIC_MARKETING_URL || "https://teens2inspire.org";
         const callback = new URL("/auth/callback", marketingOrigin);
-        callback.searchParams.set("next", membershipPath);
+        callback.searchParams.set("next", plan === "school" && schoolCode ? `/school?redeemCode=${encodeURIComponent(schoolCode)}` : membershipPath);
 
         const ageConfirmed = form.get("age-13plus") === "on";
         if (!ageConfirmed) {
@@ -59,15 +66,29 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
 
         if (error) throw error;
 
-        // Some Supabase projects allow immediate sessions; others require email verification.
-        if (data.session) {
-          window.location.assign(membershipPath);
+        if (plan === "school") {
+          if (!schoolCode) throw new Error("Enter the school access code provided by your school.");
+          if (data.session) {
+            const redeem = await fetch("/api/school/redeem", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: schoolCode }) });
+            const result = await redeem.json().catch(() => ({}));
+            if (!redeem.ok) throw new Error(result.error || "That school code could not be redeemed.");
+            window.location.assign(process.env.NEXT_PUBLIC_MEDIA_URL || "https://media.teens2inspire.org");
+            return;
+          }
+          setMsg("Your account is created. Confirm your email to finish setting up school access; your school code will be applied when you return from the confirmation link.");
           return;
         }
 
-        setMsg(
-          `Please check your inbox and confirm your email address. After confirmation, you will be sent to secure Stripe Checkout for the selected plan. If you did not select a plan, Personal ($7.99/month) will be selected by default. Your membership is not active until checkout is completed.`
-        );
+        const checkoutResponse = await fetch("/api/stripe/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: plan || "personal", email, userId: data.user?.id, discountCode }),
+        });
+        const checkout = await checkoutResponse.json().catch(() => ({}));
+        if (!checkoutResponse.ok) throw new Error(checkout.error || "Your account was created, but checkout could not be opened. Sign in and try again.");
+        if (typeof checkout.url !== "string" || !checkout.url.startsWith("https://checkout.stripe.com/")) throw new Error("Stripe did not return a valid secure checkout link.");
+        window.location.assign(checkout.url);
+        return;
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -100,7 +121,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
     }
   }
 
-  const plan = typeof window !== "undefined" ? selectedPlan() : null;
+  const plan = initialPlan || (typeof window !== "undefined" ? selectedPlan() : null);
   const signupHref = plan ? `/signup?plan=${plan}` : "/signup";
   const loginHref = plan ? `/login?next=${encodeURIComponent(`/membership?plan=${plan}`)}` : "/login";
 
@@ -130,6 +151,19 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
           </label>
         </>
       )}
+      {mode === "signup" && plan === "school" && (
+        <>
+          <label htmlFor="school-code" style={{ marginTop: 18 }}>School access code</label>
+          <input id="school-code" name="school-code" type="text" required autoCapitalize="characters" placeholder="Enter the code from your school" />
+          <p style={{ fontSize: 12, marginTop: 6 }}>Free access is available through participating schools.</p>
+        </>
+      )}
+      {mode === "signup" && plan !== "school" && (
+        <>
+          <label htmlFor="discount-code" style={{ marginTop: 18 }}>Discount code (optional)</label>
+          <input id="discount-code" name="discount-code" type="text" autoCapitalize="characters" placeholder="Enter a promo code" />
+        </>
+      )}
       <label htmlFor="auth-password">Password (at least 8 characters)</label>
       <input
         id="auth-password"
@@ -141,7 +175,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
       />
       {msg && <div className="notice" role="status">{msg}</div>}
       <button className="btn primary" style={{ width: "100%", marginTop: 20 }} disabled={busy}>
-        {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
+        {busy ? "Please wait…" : mode === "signup" ? (plan === "school" ? "Create free school account" : "Continue to secure checkout") : "Sign in"}
       </button>
       <p style={{ fontSize: 13 }}>
         {mode === "signup" ? "Already have an account? " : "Need an account? "}

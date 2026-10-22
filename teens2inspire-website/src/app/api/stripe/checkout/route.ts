@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  let payload: { plan?: unknown };
+  let payload: { plan?: unknown; email?: unknown; userId?: unknown; discountCode?: unknown };
 
   try {
     payload = await request.json();
@@ -18,18 +18,15 @@ export async function POST(request: Request) {
 
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
+    const email = typeof payload.email === "string" ? payload.email.trim().toLowerCase() : undefined;
+    const userId = typeof payload.userId === "string" ? payload.userId : undefined;
+    const discountCode = typeof payload.discountCode === "string" ? payload.discountCode.trim() : "";
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: "Please sign in before starting membership." },
-        { status: 401 }
-      );
-    }
-
-    // Stripe credentials stay in Supabase Edge Function secrets, never in Vercel.
+    // The Edge Function verifies either the signed-in user or an existing unverified signup.
+    // Stripe credentials remain in Supabase secrets.
     const { data, error } = await supabase.functions.invoke("stripe-checkout", {
-      body: { plan: payload.plan },
+      body: { plan: payload.plan, email, userId, discountCode },
     });
 
     if (error) {
