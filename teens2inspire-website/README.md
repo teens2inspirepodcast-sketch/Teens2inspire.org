@@ -82,3 +82,10 @@ The shared Supabase schema's family-profile mutations are restricted to guarded 
 
 ### Fresh-install schema compatibility
 Migration `007_complete_app_schema.sql` brings older base migrations up to the current shared app schema, including section metadata, content metadata, categories, billing tables, Stripe webhook idempotency records, and current content-access policies. Apply the shared migrations in numeric order through `007` before configuring production credentials.
+
+
+## Environment variables: what the site actually reads
+
+The marketing site reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`), `NEXT_PUBLIC_MARKETING_URL`, and `NEXT_PUBLIC_MEDIA_URL`. `NEXT_PUBLIC_SITE_URL` is included as a deployment reference. The app does not read Stripe secret keys or Stripe price IDs from Vercel: its checkout route calls the Supabase `stripe-checkout` Edge Function. Configure `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID_PERSONAL`, and `STRIPE_PRICE_ID_FAMILY` as Supabase Edge Function secrets. Point Stripe's webhook directly to `https://mphswidvmesdkefkgwjz.supabase.co/functions/v1/stripe-webhook`; the Vercel `/api/stripe/webhook` route intentionally returns 410 so it cannot be mistaken for the webhook receiver.
+
+Cloudflare R2 credentials and bucket names are not used by the marketing site's current code; private media upload and signed playback are handled by the media app. Extra R2 or Stripe variables present in the marketing site's Vercel settings are therefore not consumed by this project.

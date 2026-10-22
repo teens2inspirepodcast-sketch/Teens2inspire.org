@@ -126,7 +126,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
               required
               style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0 }}
             />
-            <span>I have read and agree to the Terms of Service and Privacy Policy.</span>
+            <span>I have read and agree to the <Link href="/terms" target="_blank" rel="noreferrer">Terms of Service</Link> and <Link href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</Link>.</span>
           </label>
         </>
       )}
