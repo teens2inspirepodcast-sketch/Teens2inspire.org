@@ -7,7 +7,7 @@ export default function TermsPage() {
     <p><strong>Last updated: October 21, 2026</strong></p>
     <p>Teens2Inspire provides curated media, podcast episodes, resources, and membership features for Jewish teen girls. By creating an account or using the service, you agree to these terms and to use the platform lawfully and respectfully.</p>
     <h2>Accounts and eligibility</h2>
-    <p>You must provide accurate account information and keep your login credentials private. The service is intended for users age 13 and older. Anyone under 13 must not create an account unless a parent or guardian has completed a legally valid consent process that the service supports. Parents and guardians should supervise younger users' use of connected devices and accounts.</p>
+    <p>You must provide accurate account information and keep your login credentials private. The service is intended for users age 13 and older. Users under 13 may not create an account because the platform does not currently provide an under-13 parental-consent workflow. Parents and guardians should supervise younger users' use of connected devices and accounts.</p>
     <h2>Membership and payments</h2>
     <p>Personal membership is offered at $7.99 per month and Family membership at $9.99 per month, subject to the plan details shown at checkout. A paid membership becomes active only after successful payment confirmation. Subscriptions renew unless canceled through the available subscription-management process. Any cancellation takes effect according to the billing terms shown by the payment provider; access may continue through the paid period. School access depends on a valid, active school code and the applicable school arrangement.</p>
     <h2>Content and acceptable use</h2>

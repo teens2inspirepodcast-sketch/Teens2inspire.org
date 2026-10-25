@@ -81,7 +81,7 @@ export async function createSchoolCode(formData: FormData) {
   if (expiresText && !Number.isFinite(Date.parse(expiresText))) go("Enter a valid expiration date.");
   const { data: school, error: schoolError } = await supabase.from("schools").insert({ name: schoolName, contact_email: email || null }).select("id").single();
   if (schoolError || !school) go(`School could not be saved: ${schoolError?.message || "Unknown error"}`);
-  const rawCode = `T2I-${randomBytes(7).toString("hex").toUpperCase()}`;
+  const rawCode = `TEENS2INSPIRE-${randomBytes(7).toString("hex").toUpperCase()}`;
   const codeHash = createHash("sha256").update(rawCode).digest("hex");
   const { error: codeError } = await supabase.from("school_codes").insert({
     school_id: school.id, code_hash: codeHash, max_uses: maxUses,

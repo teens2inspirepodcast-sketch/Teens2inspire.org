@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  let payload: { plan?: unknown; email?: unknown; userId?: unknown; discountCode?: unknown };
+  let payload: { plan?: unknown; email?: unknown; userId?: unknown; accessToken?: unknown; discountCode?: unknown };
 
   try {
     payload = await request.json();
@@ -18,7 +18,10 @@ export async function POST(request: Request) {
 
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const [{ data: { user } }, { data: { session } }] = await Promise.all([
+      supabase.auth.getUser(),
+      supabase.auth.getSession(),
+    ]);
     const email = typeof payload.email === "string" ? payload.email.trim().toLowerCase() : undefined;
     const userId = typeof payload.userId === "string" ? payload.userId : undefined;
     const discountCode = typeof payload.discountCode === "string" ? payload.discountCode.trim() : "";
@@ -26,7 +29,10 @@ export async function POST(request: Request) {
     // The Edge Function verifies either the signed-in user or an existing unverified signup.
     // Stripe credentials remain in Supabase secrets.
     const { data, error } = await supabase.functions.invoke("stripe-checkout", {
-      body: { plan: payload.plan, email, userId, discountCode },
+      body: { plan: payload.plan, email: email ?? user?.email?.toLowerCase(), userId: userId ?? user?.id, accessToken: typeof payload.accessToken === "string" ? payload.accessToken : session?.access_token },
+      ...((typeof payload.accessToken === "string" && payload.accessToken) || session?.access_token
+        ? { headers: { Authorization: `Bearer ${typeof payload.accessToken === "string" && payload.accessToken ? payload.accessToken : session?.access_token}` } }
+        : {}),
     });
 
     if (error) {

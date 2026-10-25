@@ -15,7 +15,7 @@ export default function PrivacyPage() {
     <h2>Sharing and security</h2>
     <p>We do not sell personal information. Information may be processed by the providers listed above, disclosed when legally required, or used to protect users and the service. We use access controls and security measures intended to limit unauthorized access, but no internet service can guarantee absolute security.</p>
     <h2>Young users and parental questions</h2>
-    <p>The service is intended for users age 13 and older. If you believe a child under 13 has created an account without the required parental consent, contact us through the <a href="/contact">Contact page</a> so we can review the situation.</p>
+    <p>The service is intended for users age 13 and older and does not currently support account creation for children under 13. If you believe a child under 13 has created an account, contact us through the <a href="/contact">Contact page</a> so we can review and address the account.</p>
     <h2>Retention and your choices</h2>
     <p>We retain information for as long as needed to operate the service, meet legal and accounting obligations, resolve disputes, and enforce agreements. You may contact us to ask about access, correction, or deletion of account information, subject to legal and operational requirements.</p>
     <h2>Changes and contact</h2>

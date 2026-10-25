@@ -1,5 +1,7 @@
 "use client";
 
+import { redeemSchoolCode } from "@/lib/school-code";
+
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -43,7 +45,7 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
 
         const ageConfirmed = form.get("age-13plus") === "on";
         if (!ageConfirmed) {
-          throw new Error("Please confirm that you are at least 13 years old. If you are under 13, a parent or guardian must complete the required consent process before you can create an account.");
+          throw new Error("You must be at least 13 years old to create a Teens2Inspire account.");
         }
         const termsAccepted = form.get("accept-terms") === "on";
         if (!termsAccepted) {
@@ -75,14 +77,15 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
         });
 
         if (error) throw error;
+        if (!data.user?.id) {
+          throw new Error("We couldn't create a new account with that email. If you already signed up, please sign in instead. If this is a new account, check your email for a confirmation link and try signing in after confirming.");
+        }
 
         if (plan === "school") {
           if (!schoolCode) throw new Error("Enter the school access code provided by your school.");
           if (data.session) {
-            const redeem = await fetch("/api/school/redeem", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: schoolCode }) });
-            const result = await redeem.json().catch(() => ({}));
-            if (!redeem.ok) throw new Error(result.error || "That school code could not be redeemed.");
-            window.location.assign(process.env.NEXT_PUBLIC_MEDIA_URL || "https://media.teens2inspire.org");
+            await redeemSchoolCode(schoolCode);
+            window.location.assign(new URL("/login?schoolAccess=activated", process.env.NEXT_PUBLIC_MEDIA_URL || "https://media.teens2inspire.org").toString());
             return;
           }
           setMsg("Your account is created. Confirm your email to finish setting up school access; your school code will be applied when you return from the confirmation link.");
@@ -92,7 +95,7 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
         const checkoutResponse = await fetch("/api/stripe/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan: plan || "personal", email, userId: data.user?.id, discountCode }),
+          body: JSON.stringify({ plan: plan || "personal", email, userId: data.user.id, accessToken: data.session?.access_token, discountCode }),
         });
         const checkout = await checkoutResponse.json().catch(() => ({}));
         if (!checkoutResponse.ok) throw new Error(checkout.error || "Your account was created, but checkout could not be opened. Sign in and try again.");
@@ -109,8 +112,9 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
             ? rawNext
             : "/app";
 
-        // Membership checkout belongs on the marketing domain. Member content belongs in the app.
-        if (next.startsWith("/membership") || next.startsWith("/school")) {
+        // Paid membership checkout belongs on the marketing domain. School pages are
+        // marketing/application pages; a signed-in school member should enter the media app.
+        if (next.startsWith("/membership")) {
           window.location.assign(new URL(next, window.location.origin).toString());
           return;
         }
@@ -121,7 +125,7 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
           (window.location.hostname === "localhost"
             ? "http://localhost:3001"
             : "https://media.teens2inspire.org");
-        const mediaPath = next === "/app" ? "/" : next;
+        const mediaPath = next === "/app" || next.startsWith("/school") ? "/" : next;
         window.location.assign(new URL(mediaPath, mediaOrigin).toString());
       }
     } catch (error) {
@@ -153,7 +157,7 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
               required
               style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0 }}
             />
-            <span>I confirm that I am at least 13 years old. If I am under 13, a parent or guardian allows me to create an account.</span>
+            <span>I confirm that I am at least 13 years old.</span>
           </label>
           <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 12, fontSize: 13, lineHeight: 1.5 }}>
             <input name="accept-terms" type="checkbox" required style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0 }} />

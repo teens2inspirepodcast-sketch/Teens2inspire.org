@@ -1,4 +1,6 @@
 "use client";
+
+import { redeemSchoolCode } from "@/lib/school-code";
 import { useState } from "react";
 export function SchoolCodeForm() {
   const [code, setCode] = useState("");
@@ -8,10 +10,8 @@ export function SchoolCodeForm() {
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setMessage(""); setSuccess(false);
     try {
-      const response = await fetch("/api/school/redeem", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code }) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not redeem that code.");
-      setSuccess(true); setMessage(`School access activated for ${data.schoolName}.`); setCode("");
+      const schoolName = await redeemSchoolCode(code);
+      setSuccess(true); setMessage(`School access activated for ${schoolName}.`); setCode("");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not redeem that code."); }
     finally { setBusy(false); }
   }

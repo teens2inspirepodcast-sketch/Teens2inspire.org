@@ -1,3 +1,5 @@
+> **Production release notes:** Read [`START_HERE_PRODUCTION.md`](./START_HERE_PRODUCTION.md) before uploading this repository to GitHub or connecting it to Vercel. Build verification is pending because npm registry DNS was unavailable in the preparation environment. The included GitHub Actions workflow runs the typecheck and production build after upload.
+
 # Teens2Inspire.org — Marketing Website
 
 This is the **dark editorial marketing and account website** for `teens2inspire.org`. It is intentionally separate from the light, installable media app at `media.teens2inspire.org`.

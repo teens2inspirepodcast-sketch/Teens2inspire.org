@@ -13,8 +13,7 @@ export default async function Membership({
     <Page title="A little more inspiration, all in one place.">
       {params.checkout === "success" && (
         <p className="notice" role="status">
-          Checkout completed. Your membership will activate after Stripe confirms the payment.
-          If access does not update shortly, please contact support.
+          Checkout completed. Your membership will activate after Stripe confirms the payment. Then <Link href="https://media.teens2inspire.org/login">sign in to the media app</Link> to start watching and listening. If access does not update shortly, please contact support.
         </p>
       )}
       {params.checkout === "cancelled" && (

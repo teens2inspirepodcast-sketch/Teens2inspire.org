@@ -43,3 +43,11 @@ This archive is a release candidate, not a claim of fully verified production re
 - Signup accepts a discount code; the checkout Edge Function validates it against active Stripe promotion codes. If no code is supplied, Stripe Checkout allows a promotion code to be entered there.
 - School selection remains on the signup page and displays a school-code field. If email confirmation is required, the callback returns to the school page and attempts to redeem the supplied code after the session is established.
 - Deploy `supabase/functions/stripe-checkout/index.ts` with JWT verification disabled for this function only; the handler validates either a signed-in user or an exact matching unverified signup. Test duplicate signups, expired/invalid codes, successful payment, email verification, and webhook activation before launch.
+
+
+## Production prep pass 2026-10-25
+- Added GitHub Actions validation workflow for install, TypeScript check, and Next.js build.
+- Added exact Node/npm runtime metadata and pinned the direct dependency versions from the supplied manifest.
+- Corrected the Apple Podcasts URL to the project's current listing and added a data-correction migration.
+- Corrected newly generated school access code display prefix to use the full Teens2Inspire brand name.
+- The complete production build remains unverified because registry DNS is unavailable in this environment; no lockfile was fabricated.
