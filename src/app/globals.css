@@ -146,3 +146,15 @@ button,a,[role=button]{touch-action:manipulation}
 .card-podcast{background:linear-gradient(135deg,#6c2855,#e85b96)}.card-read{background:linear-gradient(135deg,#82583d,#e8c5a1)}.card-print{background:linear-gradient(135deg,#465a7b,#afc7e5)}
 @media(max-width:760px){.partnerships-section{padding:60px 18px}.partnerships-heading{align-items:flex-start;flex-direction:column;gap:12px}.partnerships-heading>p{max-width:420px}.podcast-platform-section{grid-template-columns:1fr;gap:20px;padding:42px 17px 52px}.podcast-platform-grid{gap:8px}.podcast-platform-card{padding:10px 24px 10px 10px;min-height:72px}.podcast-platform-card img{max-width:145px;max-height:48px}.about-offerings-grid{grid-template-columns:1fr}.about-copy-section{margin-top:35px;padding-top:25px}.about-lead{font-size:16px!important}.app-preview-mock{transform:none}.preview-mock-feature{min-height:175px}}
 @media(prefers-reduced-motion:reduce){.partner-track{animation:none}}
+
+/* 2026-10-25: accessible contrast corrections for marketing and About pages */
+.about-copy-section { color:#f8f0f3 !important; }
+.about-copy-section :where(h1,h2,h3,h4,strong,b) { color:#fff7fb !important; }
+.about-copy-section :where(p,li,span) { color:#e0d2da !important; }
+.about-copy-section .eyebrow { color:#ff9fc4 !important; }
+.about-copy-section article { background:#21131d; border-color:#654053; }
+.about-copy-section article :where(strong,h2,h3) { color:#fff7fb !important; }
+.about-copy-section article p { color:#e0d2da !important; }
+.about-lead { color:#fff7fb !important; }
+:where(.marketing-header,.marketing-nav,.site-footer) :where(a,span,p,small) { color:inherit; }
+:where(.marketing-header,.marketing-nav,.site-footer) a:focus-visible { outline:3px solid #ff9fc4; outline-offset:4px; border-radius:4px; }
