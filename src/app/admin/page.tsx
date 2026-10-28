@@ -36,6 +36,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: S
       {params.notice && <div className="admin-notice" role="status">{params.notice}</div>}
       {params.createdCode && <section className="admin-code-reveal"><div><strong>New school access code</strong><p>Copy this code now. Only its hash is stored in the database.</p><code>{params.createdCode}</code></div><p className="admin-copy-note">Copy and save this code now; it will not be shown again.</p></section>}
       {issue && <div className="admin-alert">Some dashboard data could not load: {issue.message}. Check that both Supabase migrations have been applied.</div>}
+      <section className="admin-spotlight"><div className="admin-spotlight-icon">✦</div><div><p className="admin-eyebrow">NEW / WEBSITE CONTENT</p><h2>Your promotional pop-up</h2><p>Upload an image or video, customize the message, preview your design, and publish it to the homepage.</p></div><Link href="/admin/popup" className="admin-spotlight-link">Manage pop-up ↗</Link></section>
       <section className="admin-stats">
         <article><span>Total accounts</span><strong>{profiles.length}</strong><small>Most recent 100</small></article>
         <article><span>Active memberships</span><strong>{activeMembers}</strong><small>Includes school access</small></article>
