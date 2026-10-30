@@ -1,0 +1,10 @@
+{
+  "project": "website",
+  "base_zip": "Teens2Inspire-Website-Editorial-Redesign-Popup-2026-10-27.zip",
+  "patch_date": "2026-10-28",
+  "files": {
+    "src/app/layout.tsx": "cfa5bf929dcbe364b0513d61e803196ae393c0da69b00be0374c2068fbb7bb25",
+    "src/app/streaming-refresh.css": "2dffcee07d527dec84ebf97e6f5d64eb3be363dc0d522c046ff829ad7dd698f9",
+    "src/components/site.tsx": "6e741ff02057cfb62478d56797a14a953a4bceaecfa678ced63cfc0a8653a0a4"
+  }
+}

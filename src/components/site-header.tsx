@@ -5,10 +5,10 @@ import Image from "next/image";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 
-export function Header() {
+export function Header({ logoSrc }: { logoSrc?: string | null } = {}) {
   const [open, setOpen] = useState(false);
   return <header className="marketing-header">
-    <Link className="wordmark-logo-wrap" href="/" aria-label="Teens2Inspire home"><Image className="wordmark-logo" src="/teens2inspire-logo.png" alt="Teens2Inspire — a media platform for Jewish teen girls" width={520} height={130} priority /></Link>
+    <Link className="wordmark-logo-wrap" href="/" aria-label="Teens2Inspire home">{logoSrc && /^https:\/\//.test(logoSrc) ? <img className="wordmark-logo" src={logoSrc} alt="Teens2Inspire" width={520} height={130}/> : <Image className="wordmark-logo" src="/teens2inspire-logo.png" alt="Teens2Inspire — a media platform for Jewish teen girls" width={520} height={130} priority />}</Link>
     <nav className={`marketing-nav${open ? " is-open" : ""}`} aria-label="Main navigation">
       <Link href="/about" onClick={() => setOpen(false)}>Our story</Link>
       <Link href="/podcast" onClick={() => setOpen(false)}>Podcast</Link>

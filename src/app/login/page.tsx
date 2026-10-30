@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth-form";
 import { Header } from "@/components/site-header";
+import { getMarketingSettings } from "@/lib/marketing-settings";
 import { Footer } from "@/components/site";
 
 export default async function Login({ searchParams }: { searchParams: Promise<{ next?: string; error?: string; message?: string }> }) {
   const params = await searchParams;
+  const marketingSettings = await getMarketingSettings();
   const rawNext = params.next || "/app";
   const safeNext = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/app";
 
@@ -16,7 +18,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
   }
 
   return <>
-    <Header />
+    <Header logoSrc={marketingSettings.brand_logo_url}/>
     <main className="auth-page">
       <div className="auth-orb" />
       <section className="auth-panel">

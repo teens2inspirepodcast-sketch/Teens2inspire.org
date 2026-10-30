@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AuthForm } from "@/components/auth-form";
 import { Header } from "@/components/site-header";
+import { getMarketingSettings } from "@/lib/marketing-settings";
 import { Footer } from "@/components/site";
 
 export default async function Signup({
@@ -9,11 +10,12 @@ export default async function Signup({
   searchParams: Promise<{ plan?: string }>;
 }) {
   const params = await searchParams;
+  const marketingSettings = await getMarketingSettings();
   const selectedPlan = params.plan === "family" ? "family" : params.plan === "personal" ? "personal" : params.plan === "school" ? "school" : null;
 
   return (
     <>
-      <Header />
+      <Header logoSrc={marketingSettings.brand_logo_url}/>
       <main className="auth-page">
         <div className="auth-orb" />
         <section className="auth-panel">

@@ -16,15 +16,15 @@ export default async function PodcastPage() {
   try {
     const supabase = await createClient();
     const { data } = await supabase.from("content").select("id,title,description,cover_url,published_at").eq("type", "podcast").eq("status", "published").order("published_at", { ascending: false });
-    episodes = (data || []) as typeof episodes;
+    episodes = (data || []).map(item => ({ ...item, cover_url: typeof item.cover_url === "string" && item.cover_url.startsWith("/api/media/artwork/") ? `https://media.teens2inspire.org${item.cover_url}` : item.cover_url })) as typeof episodes;
   } catch { /* The Spotify player remains available if the content catalogue is temporarily unavailable. */ }
   return <>
-    <Header />
+    <Header logoSrc={settings.brand_logo_url} />
     <main className="podcast-page">
       <section className="podcast-hero">
         <div className="podcast-hero-glow" aria-hidden="true" />
         <div className="eyebrow"><span className="eyebrow-dot" /> THE TEENS2INSPIRE PODCAST</div>
-        <h1>Real conversations.<br /><em>Meaningful moments.</em></h1>
+        <h1>{settings.podcast_hero_title || "Real conversations. Meaningful moments."}</h1>
         <p>{settings.podcast_description || "Honest conversations, personal stories, and fresh perspectives from Jewish teen girls and the people who inspire them."}</p>
         <a className="podcast-hero-link" href="#episodes">Explore episodes <span aria-hidden="true">↓</span></a>
       </section>

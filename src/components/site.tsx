@@ -11,61 +11,55 @@ import { readSitePopup, getPopupMediaUrl } from "@/lib/site-popup";
 
 type PreviewItem = { id: string; title: string; description?: string | null; type: string; cover_url?: string | null };
 
-export function Footer() {
-  return <footer className="marketing-footer"><div className="footer-top"><Link className="wordmark-logo-wrap footer-logo-wrap" href="/"><Image className="wordmark-logo" src="/teens2inspire-logo.png" alt="Teens2Inspire — a media platform for Jewish teen girls" width={520} height={130} /></Link><p>A little inspiration can change the way a day feels.</p><Link className="footer-cta" href="https://media.teens2inspire.org/">Enter the media app <ArrowUpRight size={16}/></Link></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Teens2Inspire</span><span>Made with intention.</span><div><Link href="/contact">Contact</Link><Link href="/school">School access</Link><Link href="/membership">Membership</Link><Link href="/terms">Terms</Link><Link href="/privacy">Privacy</Link><Link href="/cookies">Cookies</Link><Link href="/refunds">Refunds</Link></div></div></footer>;
+export async function Footer() {
+  const settings = await getMarketingSettings();
+  return <footer className="marketing-footer"><div className="footer-top"><Link className="wordmark-logo-wrap footer-logo-wrap" href="/">{settings.brand_logo_url && /^https:\/\//.test(settings.brand_logo_url) ? <img className="wordmark-logo" src={settings.brand_logo_url} alt="Teens2Inspire" width={520} height={130}/> : <Image className="wordmark-logo" src="/teens2inspire-logo.png" alt="Teens2Inspire — a media platform for Jewish teen girls" width={520} height={130} />}</Link><p>{settings.footer_tagline || "A little inspiration can change the way a day feels."}</p><Link className="footer-cta" href="https://media.teens2inspire.org/">Enter the media app <ArrowUpRight size={16}/></Link></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Teens2Inspire</span><span>Made with intention.</span><div><Link href="/contact">Contact</Link><Link href="/school">School access</Link><Link href="/membership">Membership</Link><Link href="/terms">Terms</Link><Link href="/privacy">Privacy</Link><Link href="/cookies">Cookies</Link><Link href="/refunds">Refunds</Link></div></div></footer>;
 }
 
-export function Page({ title, children }: { title: string; children: React.ReactNode }) {
-  return <><Header/><main className="inner-page"><div className="inner-page-glow"/><div className="inner-page-content"><div className="eyebrow"><span className="eyebrow-dot"/> TEENS2INSPIRE / THE STORY</div><h1>{title}</h1><div className="inner-copy">{children}</div></div></main><Footer/></>;
+export async function Page({ title, children }: { title: string; children: React.ReactNode }) {
+  const settings = await getMarketingSettings();
+  return <><Header logoSrc={settings.brand_logo_url}/><main className="inner-page"><div className="inner-page-glow"/><div className="inner-page-content"><div className="eyebrow"><span className="eyebrow-dot"/> TEENS2INSPIRE / THE STORY</div><h1>{title}</h1><div className="inner-copy">{children}</div></div></main><Footer/></>;
 }
 
 async function getPreviewItems(): Promise<PreviewItem[]> {
   try {
     const supabase = await createClient();
-    const { data } = await supabase.from("content").select("id,title,description,type,cover_url").eq("status", "published").order("published_at", { ascending: false }).limit(3);
-    return (data || []) as PreviewItem[];
+    const { data } = await supabase.from("content").select("id,title,description,type,cover_url").eq("status", "published").order("published_at", { ascending: false }).limit(12);
+    return (data || []).map(row => ({ ...row, cover_url: typeof row.cover_url === "string" && row.cover_url.startsWith("/api/media/artwork/") ? `https://media.teens2inspire.org${row.cover_url}` : row.cover_url })) as PreviewItem[];
   } catch { return []; }
 }
 
 export async function Home() {
   const [settings, announcement, latest] = await Promise.all([getMarketingSettings(), readSitePopup(), getPreviewItems()]);
   const popupMedia = announcement?.is_enabled ? await getPopupMediaUrl(announcement.media_path) : null;
-  return <>{announcement?.is_enabled && <SitePopupModal settings={announcement} mediaUrl={popupMedia}/>}<Header/><main className="marketing-main editorial-home">
-    <div className="editorial-announcement"><span className="editorial-announcement-star">✦</span><span>WELCOME TO A DIFFERENT KIND OF MEDIA EXPERIENCE</span><Link href="/membership">DISCOVER THE MEMBERSHIP <ArrowUpRight size={13}/></Link></div>
-    <section className="editorial-hero">
-      <div className="editorial-hero-lines" aria-hidden="true"/>
-      <div className="editorial-copy">
-        <div className="editorial-edition"><span className="edition-line"/> AN INVITATION TO BE INSPIRED <span className="edition-index">NO. 01 / TEENS2INSPIRE</span></div>
-        <h1>{settings.home_hero_title || "Good things stay with you."}</h1>
-        <p className="editorial-deck">{settings.home_hero_subtitle || "Meaningful stories, honest conversations, and a little perspective for every kind of day."}</p>
-        <div className="editorial-actions"><Link className="editorial-join" href="/signup">Discover your space <ArrowUpRight size={19}/></Link><Link className="editorial-quiet" href="/about">The story behind us <ArrowRight size={17}/></Link></div>
-        <div className="editorial-bottom-meta"><span>CURATED WITH CARE</span><span>MADE FOR JEWISH TEEN GIRLS</span><span>EST. WITH PURPOSE</span></div>
-      </div>
-      <div className="editorial-hero-stage" aria-label="A visual preview of the Teens2Inspire media experience">
-        <div className="editorial-stage-orbit" aria-hidden="true"/>
-        <div className="editorial-feature-poster"><span className="feature-poster-topline">TEENS2INSPIRE <span>THE MEDIA EDIT</span></span>
-          <span className="feature-poster-arc" aria-hidden="true"/>
-          <div className="feature-poster-center"><span>THE POWER OF A MOMENT</span><strong>Stories<br/><i>worth</i><br/>keeping.</strong><p>WATCH · LISTEN · READ</p></div>
-          <div className="feature-poster-bottom"><span>001 / A WORLD OF YOUR OWN</span><span>INSPIRING JEWISH TEEN GIRLS</span></div>
+  const featured = latest[0];
+  return <>
+    {announcement?.is_enabled && <SitePopupModal settings={announcement} mediaUrl={popupMedia} />}
+    <Header logoSrc={settings.brand_logo_url}/>
+    <main className="t2i-site-streaming">
+      <section className="t2i-site-hero" aria-labelledby="t2i-site-headline">
+        <div className="t2i-site-soft-light" aria-hidden="true" />{settings.home_hero_image_url && /^https:\/\//.test(settings.home_hero_image_url) && <div className="t2i-site-custom-hero-image" aria-hidden="true" style={{backgroundImage:`url("${settings.home_hero_image_url.replaceAll('"','%22')}")`}}/>}
+        <span className="t2i-site-kicker"><span/> A MEDIA SPACE MADE FOR YOU</span>
+        <h1 id="t2i-site-headline">{settings.home_hero_title || <>A little more<br/><em>inspiration.</em><br/>Every day.</>}</h1>
+        <p className="t2i-site-deck">{settings.home_hero_subtitle || "Discover meaningful videos, conversations, and stories — thoughtfully curated for Jewish teen girls."}</p>
+        <div className="t2i-site-hero-actions"><Link href="/signup" className="t2i-site-join">Join Teens2Inspire <ArrowUpRight size={18}/></Link><Link href="/about" className="t2i-site-outline">Learn more <ArrowRight size={17}/></Link></div>
+        <span className="t2i-site-underhero">WATCH. LISTEN. READ. BE INSPIRED.</span>
+      </section>
+      <section className="t2i-site-preview-block" aria-label="Preview the Teens2Inspire media app">
+        <div className="t2i-site-preview-header"><div><span className="t2i-site-label">YOUR NEW FAVORITE SPACE</span><h2>{settings.home_app_title || "Everything you love. All in one place."}</h2></div><p>{settings.home_app_description || "One beautiful media library, filled with meaningful content. Stream a conversation, discover a new perspective, or save something for later."}</p></div>
+        <div className="t2i-site-app-window">
+          <div className="t2i-site-app-toolbar"><span className="t2i-site-app-brand">Teens<span>2</span>Inspire</span><div><span>Explore</span><span>Listen</span><span>Watch</span><span>Library</span></div><span className="t2i-site-app-avatar">T</span></div>
+          <div className="t2i-site-app-hero"><div className="t2i-site-app-hero-text"><span>THE INSPIRATION COLLECTION</span><strong>Good things<br/>start here.</strong><small>Beautiful content for your everyday.</small><Link href="https://media.teens2inspire.org/app" className="t2i-site-app-mini-button">Explore the app <ArrowRight size={13}/></Link></div>{featured?.cover_url && <div className="t2i-site-app-hero-image" style={{backgroundImage:`url("${featured.cover_url.replaceAll('"','%22')}")`}} aria-hidden="true"/>}<span className="t2i-site-app-hero-glow"/></div>
+          <div className="t2i-site-app-shelf-heading"><strong>Handpicked for you</strong><span>Discover more <ArrowRight size={12}/></span></div>
+          <div className="t2i-site-app-covers">{latest.slice(0,5).map((item, i)=><Link href={`https://media.teens2inspire.org/app/content/${encodeURIComponent(item.id)}`} key={item.id} className="t2i-site-app-cover"><div className={`t2i-site-cover-art t2i-site-cover-${i}`} style={item.cover_url ? {backgroundImage:`url("${item.cover_url.replaceAll('"','%22')}")`} : undefined}>{!item.cover_url && <span>Teens2Inspire</span>}</div><b>{item.title}</b><small>{item.type}</small></Link>)}{!latest.length && ["Watch","Listen","Read","Discover"].map((name,i)=><div className="t2i-site-app-cover" key={name}><div className={`t2i-site-cover-art t2i-site-cover-${i}`}><span>Teens2Inspire</span></div><b>{name} with purpose</b><small>COMING SOON</small></div>)}</div>
         </div>
-        <div className="editorial-float editorial-float-one"><span>THE PODCAST</span><b>Conversations that matter.</b><Headphones size={18}/></div>
-        <div className="editorial-float editorial-float-two"><span>AN ORIGINAL EXPERIENCE</span><b>A little space<br/>for yourself.</b><Heart size={18}/></div>
-        <div className="editorial-stage-caption">THOUGHTFULLY CURATED <span>✳</span> MADE FOR YOUR EVERYDAY</div>
-      </div>
-    </section>
-    <section className="editorial-ticker" aria-label="Our media formats"><div><span>YOUR NEW FAVORITE THING</span><i>✳</i><span>CONVERSATIONS</span><i>✳</i><span>STORIES</span><i>✳</i><span>INSPIRATION</span><i>✳</i><span>MADE FOR REAL LIFE</span></div></section>
-    <section className="editorial-intro" id="the-feeling"><Reveal className="editorial-intro-label"><span>01 / WHY WE EXIST</span><span className="intro-vertical-line"/></Reveal><Reveal className="editorial-intro-content"><span className="editorial-overline">SOMETHING MORE MEANINGFUL</span><h2>{settings.mission_title || "Less noise. More of what matters."}</h2><p>{settings.mission_body || "A carefully curated corner of the internet for inspiring content, real conversations, and thoughtful moments."}</p><Link href="/about" className="editorial-inline-link">Get to know us <ArrowUpRight size={18}/></Link></Reveal><div className="editorial-intro-stamp"><span>TEENS2INSPIRE</span><strong>Feel<br/>inspired.</strong><small>LISTEN / WATCH / READ</small></div></section>
-    <section className="editorial-formats" id="explore"><div className="editorial-section-heading"><div><span className="editorial-overline">02 / DISCOVER YOUR NEXT FAVORITE</span><h2>Made for <em>every</em> mood.</h2></div><p>Whether you have an hour or a few minutes, there’s something worth discovering.</p></div>
-      <div className="editorial-formats-grid">
-        <Link href="https://media.teens2inspire.org/app/explore?type=video" className="editorial-format-card editorial-format-watch"><div className="format-meta"><span>THE VISUAL EDIT</span><span>01—03</span></div><div className="format-art format-art-watch"><span className="format-play"><Play size={21} fill="currentColor"/></span><div>REAL STORIES<br/>REAL PEOPLE</div></div><div className="format-caption"><span>01 / WATCH</span><h3>A new perspective,<br/>in motion.</h3><span className="format-cta"><ArrowUpRight size={22}/></span></div></Link>
-        <Link href="/podcast" className="editorial-format-card editorial-format-listen"><div className="format-meta"><span>THE AUDIO EDIT</span><span>02—03</span></div><div className="format-art format-art-listen"><div className="format-vinyl"><div className="format-vinyl-center"><Headphones size={31}/></div></div><span className="format-soundwave">⌁ ⌁ ⌁ ⌁ ⌁</span></div><div className="format-caption"><span>02 / LISTEN</span><h3>Good conversations<br/>travel with you.</h3><span className="format-cta"><ArrowUpRight size={22}/></span></div></Link>
-        <Link href="https://media.teens2inspire.org/app/explore?type=article" className="editorial-format-card editorial-format-read"><div className="format-meta"><span>THE JOURNAL EDIT</span><span>03—03</span></div><div className="format-art format-art-read"><div className="format-page-art"><span>NOTES TO SELF / ISSUE 01</span><b>the little<br/><i>things.</i></b><span>A MOMENT TO KEEP.</span></div></div><div className="format-caption"><span>03 / READ</span><h3>Words you’ll want<br/>to come back to.</h3><span className="format-cta"><ArrowUpRight size={22}/></span></div></Link>
-      </div>
-    </section>
-    <section className="editorial-discover"><div className="editorial-discover-head"><div><span className="editorial-overline">03 / FROM THE LIBRARY</span><h2>The inspiration edit.</h2></div><Link href="https://media.teens2inspire.org/" className="editorial-inline-link">Explore the media app <ArrowUpRight size={18}/></Link></div>
-      <div className="editorial-library-preview">{latest.length ? latest.map((item,index)=><Link key={item.id} href="https://media.teens2inspire.org/" className="editorial-library-card"><div className={`editorial-library-cover library-color-${index}`} style={item.cover_url ? {backgroundImage:`linear-gradient(0deg,rgba(18,9,21,.5),transparent),url("${item.cover_url.replaceAll("\"", "%22")}")`} : undefined}><span>{String(index+1).padStart(2,"0")} / {item.type.toUpperCase()}</span><Play size={24}/></div><strong>{item.title}</strong><span>{item.description || "From our thoughtfully curated library."}</span></Link>) : <><div className="editorial-library-placeholder"><span>01 / LISTEN</span><strong>Beautiful conversations.<br/><i>Real inspiration.</i></strong><Headphones size={33}/></div><div className="editorial-library-placeholder library-placeholder-two"><span>02 / WATCH</span><strong>Stories with<br/><i>something to say.</i></strong><Play size={32}/></div><div className="editorial-library-placeholder library-placeholder-three"><span>03 / READ</span><strong>Words worth<br/><i>keeping close.</i></strong><BookOpen size={32}/></div></>}</div>
-    </section>
-    <PartnershipCarousel />
-    <section className="editorial-final"><div className="editorial-final-orb"/><div className="editorial-final-content"><span className="editorial-overline">A PLACE TO COME BACK TO</span><h2>Make room for<br/><em>something good.</em></h2><p>A meaningful media experience for the moments that matter. Your next favorite conversation is waiting.</p><div className="editorial-final-actions"><Link href="/signup" className="editorial-join">Join Teens2Inspire <ArrowUpRight size={18}/></Link><Link href="/login" className="editorial-quiet">Already a member? Sign in <ArrowRight size={17}/></Link></div></div><span className="editorial-final-side">TEENS2INSPIRE / FIND WHAT MOVES YOU</span></section>
-  </main><Footer/></>;
+        <div className="t2i-site-app-preview-footer"><span>AN EXPERIENCE MADE FOR YOU</span><Link href="https://media.teens2inspire.org/app">Open the media app <ArrowUpRight size={17}/></Link></div>
+      </section>
+      <section className="t2i-site-library-section" aria-labelledby="t2i-site-library-title"><div className="t2i-site-library-top"><div><span className="t2i-site-label">FROM OUR LIBRARY</span><h2 id="t2i-site-library-title">Find something <em>meaningful.</em></h2></div><Link href="https://media.teens2inspire.org/app/explore">Browse all <ArrowUpRight size={17}/></Link></div>
+        {latest.length ? <div className="t2i-site-content-row">{latest.map(item=><Link className="t2i-site-content-card" key={item.id} href={`https://media.teens2inspire.org/app/content/${encodeURIComponent(item.id)}`}><div className="t2i-site-content-art" style={item.cover_url ? {backgroundImage:`url("${item.cover_url.replaceAll('"','%22')}")`} : undefined}>{!item.cover_url && <span>Teens2Inspire</span>}<i><Play size={18} fill="currentColor" /></i></div><small>{item.type}</small><h3>{item.title}</h3><p>{item.description || "Discover this story in the Teens2Inspire app."}</p></Link>)}</div> : <p className="t2i-site-no-content">Newly published videos, podcasts, and stories will appear here automatically from the Teens2Inspire library.</p>}
+      </section>
+      <section className="t2i-site-format-band"><div><Headphones size={26}/><strong>Listen</strong><span>Conversations that stay with you.</span></div><div><Play size={26}/><strong>Watch</strong><span>Beautiful stories and new perspectives.</span></div><div><BookOpen size={26}/><strong>Read</strong><span>Fresh ideas for real life.</span></div></section>
+      <section className="t2i-site-membership"><span className="t2i-site-label">YOUR SPACE STARTS HERE</span><h2>{settings.home_membership_title || "More inspiration. Less noise."}</h2><p>{settings.home_membership_description || "Join Teens2Inspire and enjoy a thoughtfully curated media experience made for Jewish teen girls."}</p><div className="t2i-site-membership-actions"><Link href="/membership" className="t2i-site-join">Explore membership <ArrowUpRight size={18}/></Link><Link href="/school" className="t2i-site-outline">School access</Link></div><div className="t2i-site-price-notes"><span>PERSONAL · $7.99/MONTH</span><span>FAMILY · $9.99/MONTH</span><span>ELIGIBLE SCHOOLS · FREE</span></div></section>
+    </main><Footer/>
+  </>;
 }
