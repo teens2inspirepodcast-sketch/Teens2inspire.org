@@ -13,6 +13,7 @@ export function Header({ logoSrc }: { logoSrc?: string | null } = {}) {
       <Link href="/about" onClick={() => setOpen(false)}>Our story</Link>
       <Link href="/podcast" onClick={() => setOpen(false)}>Podcast</Link>
       <Link href="/events" onClick={() => setOpen(false)}>Events</Link>
+      <Link href="/#partners" onClick={() => setOpen(false)}>Partners</Link>
       <Link href="/school" onClick={() => setOpen(false)}>For schools</Link>
       <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
       <div className="nav-mobile-actions"><Link href="/login" onClick={() => setOpen(false)}>Sign in</Link><Link className="button button-pink" href="/signup" onClick={() => setOpen(false)}>Join us <ArrowUpRight size={15}/></Link></div>

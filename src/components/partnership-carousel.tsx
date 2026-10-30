@@ -1,21 +1,84 @@
+import { ArrowUpRight, HeartHandshake } from "lucide-react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-type Partner = { id: string; name: string; logo_url: string; website_url: string; description?: string | null };
-const fallback: Partner[] = [
-  { id: "mosaica-press", name: "Mosaica Press", logo_url: "/partners/mosaica-press.svg", website_url: "https://mosaicapress.com/" },
-  { id: "jcc-marine-park", name: "JCC of Marine Park", logo_url: "/partners/jcc-marine-park.svg", website_url: "https://www.jccmp.org/" },
-];
+
+type Partner = {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  website_url: string | null;
+  description?: string | null;
+};
+
+function safeUrl(value: string | null | undefined): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Homepage partners are loaded from the existing Supabase partnership CMS.
+ * Only active records appear; changing an entry in Admin updates this section.
+ * No fallback partners are hard-coded or displayed as active endorsements.
+ */
 export async function PartnershipCarousel() {
-  let partners = fallback;
+  let partners: Partner[] = [];
   try {
     const supabase = await createClient();
-    const { data } = await supabase.from("partnerships").select("id,name,logo_url,website_url,description").eq("is_active", true).order("display_order").order("name");
-    if (data?.length) partners = data as Partner[];
-  } catch { /* The fallback wordmarks keep this public page usable if the CMS is temporarily offline. */ }
-  const loop = [...partners, ...partners];
-  return <section className="partnerships-section" aria-label="Teens2Inspire partners">
-    <div className="partnerships-heading"><div><div className="eyebrow dark-eyebrow"><span className="eyebrow-dot"/> GOOD THINGS GROW TOGETHER</div><h2>Partners who inspire.</h2></div><p>Thank you to the organizations that help make meaningful conversations possible.</p></div>
-    <div className="partner-marquee"><div className="partner-track">{loop.map((partner,index)=><a className="partner-logo-card" key={`${partner.id}-${index}`} href={partner.website_url} target="_blank" rel="noreferrer" aria-label={`Visit ${partner.name}`} aria-hidden={index >= partners.length ? true : undefined} tabIndex={index >= partners.length ? -1 : undefined}>
-      <img src={partner.logo_url} alt={index < partners.length ? partner.name : ""} loading="lazy"/><span>{partner.name}</span>
-    </a>)}</div></div>
-  </section>;
+    const { data, error } = await supabase
+      .from("partnerships")
+      .select("id,name,logo_url,website_url,description")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true })
+      .order("name", { ascending: true });
+    if (!error && data) partners = data as Partner[];
+  } catch {
+    // Keep the homepage available if Supabase is temporarily unavailable.
+  }
+
+  return (
+    <section className="t2i-home-partners" id="partners" aria-labelledby="t2i-partners-title">
+      <div className="t2i-home-partners-inner">
+        <div className="t2i-home-partners-heading">
+          <div>
+            <span className="t2i-home-partners-eyebrow"><HeartHandshake size={16} aria-hidden="true"/> GROWING TOGETHER</span>
+            <h2 id="t2i-partners-title">Inspiring things happen <em>together.</em></h2>
+          </div>
+          <p>We're grateful for the brands and organizations supporting the Teens2Inspire community.</p>
+        </div>
+        {partners.length > 0 ? (
+          <div className="t2i-home-partner-grid" role="list">
+            {partners.map((partner) => {
+              const href = safeUrl(partner.website_url);
+              const logo = safeUrl(partner.logo_url);
+              const content = (
+                <>
+                  <span className="t2i-home-partner-mark">
+                    {logo ? <img src={logo} loading="lazy" alt={`${partner.name} logo`} /> : <span>{partner.name}</span>}
+                  </span>
+                  <span className="t2i-home-partner-footer">
+                    <strong>{partner.name}</strong>
+                    {href && <ArrowUpRight size={17} aria-hidden="true"/>}
+                  </span>
+                </>
+              );
+              return <div key={partner.id} role="listitem">
+                {href ? <a className="t2i-home-partner" href={href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${partner.name} (opens in a new tab)`}>{content}</a> : <div className="t2i-home-partner">{content}</div>}
+              </div>;
+            })}
+          </div>
+        ) : (
+          <p className="t2i-home-partners-empty">Our partner features are being updated. Check back soon.</p>
+        )}
+        <div className="t2i-home-partners-bottom">
+          <span>Partner logos and details are managed through the Teens2Inspire admin studio.</span>
+          <Link href="/contact">Interested in partnering? <ArrowUpRight size={16} aria-hidden="true"/></Link>
+        </div>
+      </div>
+    </section>
+  );
 }
