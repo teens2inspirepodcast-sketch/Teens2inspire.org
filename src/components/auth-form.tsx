@@ -99,7 +99,7 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
         });
         const checkout = await checkoutResponse.json().catch(() => ({}));
         if (!checkoutResponse.ok) throw new Error(checkout.error || "Your account was created, but checkout could not be opened. Sign in and try again.");
-        if (typeof checkout.url !== "string" || !checkout.url.startsWith("https://checkout.stripe.com/")) throw new Error("Stripe did not return a valid secure checkout link.");
+        if (typeof checkout.url !== "string" || !checkout.url.startsWith("https://checkout.stripe.com/")) throw new Error("We could not open secure checkout. Please try again.");
         window.location.assign(checkout.url);
         return;
       } else {
@@ -131,7 +131,7 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
     } catch (error) {
       const message = error instanceof Error ? error.message : "Authentication failed.";
       if (/over_email_send_rate_limit|security purposes|only request this after/i.test(message)) {
-        setMsg("Supabase is temporarily limiting confirmation emails. Wait for the cooldown shown in the message before trying again; do not repeatedly submit the form.");
+        setMsg("Too many confirmation emails have been requested. Please wait a little while before trying again.");
       } else {
         setMsg(message);
       }

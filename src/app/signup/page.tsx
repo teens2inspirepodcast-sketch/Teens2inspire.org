@@ -28,7 +28,7 @@ export default async function Signup({
           <div className="signup-pricing">
             <div className="signup-pricing-heading">
               <span className="eyebrow">MEMBERSHIP OPTIONS</span>
-              <p>Choose a plan. Paid plans continue to secure Stripe Checkout before email verification.</p>
+              <p>Choose a plan to get started. Paid memberships continue through secure checkout.</p>
             </div>
             <div className="signup-pricing-grid">
               <Link
@@ -67,7 +67,7 @@ export default async function Signup({
 
           <div className="form auth-form"><AuthForm mode="signup" initialPlan={selectedPlan} /></div>
           <p className="auth-fineprint">
-            Paid plans open secure Stripe Checkout before email verification. Your membership activates only after payment is confirmed.
+            Paid membership starts after payment confirmation. You may be asked to verify your email address.
           </p>
         </section>
       </main>

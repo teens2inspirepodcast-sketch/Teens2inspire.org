@@ -13,7 +13,7 @@ export default async function Membership({
     <Page title="A little more inspiration, all in one place.">
       {params.checkout === "success" && (
         <p className="notice" role="status">
-          Checkout completed. Your membership will activate after Stripe confirms the payment. Then <Link href="https://media.teens2inspire.org/login">sign in to the media app</Link> to start watching and listening. If access does not update shortly, please contact support.
+          Thank you. Once your payment is confirmed, your membership will be available. You can then <Link href="/login">sign in</Link> to start enjoying Teens2Inspire. If access does not update shortly, please contact support.
         </p>
       )}
       {params.checkout === "cancelled" && (
@@ -45,7 +45,7 @@ export default async function Membership({
         </article>
       </div>
       <p className="notice">
-        Payment is processed by Stripe. A paid membership activates only after the Supabase webhook verifies the subscription.
+        Payments are processed securely. Paid access begins after successful payment confirmation.
       </p>
     </Page>
   );

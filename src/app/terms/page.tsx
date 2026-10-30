@@ -4,7 +4,7 @@ export const metadata = { title: "Terms of Service" };
 
 export default function TermsPage() {
   return <Page title="Terms of Service">
-    <p><strong>Last updated: October 21, 2026</strong></p>
+    <p><strong>Last updated: October 30, 2026</strong></p>
     <p>Teens2Inspire provides curated media, podcast episodes, resources, and membership features for Jewish teen girls. By creating an account or using the service, you agree to these terms and to use the platform lawfully and respectfully.</p>
     <h2>Accounts and eligibility</h2>
     <p>You must provide accurate account information and keep your login credentials private. The service is intended for users age 13 and older. Users under 13 may not create an account because the platform does not currently provide an under-13 parental-consent workflow. Parents and guardians should supervise younger users' use of connected devices and accounts.</p>
@@ -15,6 +15,6 @@ export default function TermsPage() {
     <h2>Availability and changes</h2>
     <p>We may update, remove, or reorganize content and features. We aim to keep the service available but do not promise uninterrupted operation. We may suspend access for abuse, security concerns, non-payment, or material violations of these terms.</p>
     <h2>Contact</h2>
-    <p>For questions about these terms, use the <a href="/contact">Contact page</a>. These terms are a starting point and should be reviewed by qualified counsel before public launch.</p>
+    <p>For questions about these terms, please use the <a href="/contact">Contact page</a>.</p>
   </Page>;
 }

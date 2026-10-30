@@ -40,6 +40,8 @@ export async function PartnershipCarousel() {
     // Keep the homepage available if Supabase is temporarily unavailable.
   }
 
+  if (partners.length === 0) return null;
+
   return (
     <section className="t2i-home-partners" id="partners" aria-labelledby="t2i-partners-title">
       <div className="t2i-home-partners-inner">
@@ -50,8 +52,7 @@ export async function PartnershipCarousel() {
           </div>
           <p>We're grateful for the brands and organizations supporting the Teens2Inspire community.</p>
         </div>
-        {partners.length > 0 ? (
-          <div className="t2i-home-partner-grid" role="list">
+        <div className="t2i-home-partner-grid" role="list">
             {partners.map((partner) => {
               const href = safeUrl(partner.website_url);
               const logo = safeUrl(partner.logo_url);
@@ -70,12 +71,8 @@ export async function PartnershipCarousel() {
                 {href ? <a className="t2i-home-partner" href={href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${partner.name} (opens in a new tab)`}>{content}</a> : <div className="t2i-home-partner">{content}</div>}
               </div>;
             })}
-          </div>
-        ) : (
-          <p className="t2i-home-partners-empty">Our partner features are being updated. Check back soon.</p>
-        )}
+        </div>
         <div className="t2i-home-partners-bottom">
-          <span>Partner logos and details are managed through the Teens2Inspire admin studio.</span>
           <Link href="/contact">Interested in partnering? <ArrowUpRight size={16} aria-hidden="true"/></Link>
         </div>
       </div>

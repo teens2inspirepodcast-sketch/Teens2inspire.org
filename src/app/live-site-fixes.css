@@ -1,0 +1,16 @@
+/* Live marketing home: one clear message and one signup action, no public media catalogue. */
+html body .t2i-live-home{background:#08080a;color:#fff;min-height:78vh;overflow:hidden}
+html body .t2i-live-hero{isolation:isolate;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:34px;min-height:min(78vh,800px);padding:clamp(80px,13vh,175px) 24px clamp(95px,13vh,170px);text-align:center;background:#08080a}
+html body .t2i-live-ambient{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 42% 30% at 50% 73%,rgba(220,45,120,.13),transparent 77%),linear-gradient(180deg,#08080a,#0b0810)}
+html body .t2i-live-hero h1{color:#fff!important;max-width:1080px;margin:0;font-family:'Manrope','DM Sans',Arial,sans-serif!important;font-size:clamp(46px,9.5vw,113px)!important;font-weight:800!important;line-height:1.085!important;letter-spacing:-.065em!important;text-wrap:balance}
+html body .t2i-live-hero .t2i-live-join{display:inline-flex;justify-content:center;align-items:center;gap:16px;min-width:183px;min-height:56px;padding:13px 29px;border-radius:999px;background:#f43e88;color:#fff!important;text-decoration:none;font-weight:800;font-size:16px;box-shadow:0 14px 38px rgba(244,62,136,.23);transition:background .2s,transform .2s}
+html body .t2i-live-hero .t2i-live-join:hover{background:#c72b71;transform:translateY(-2px)}
+html body .t2i-live-hero .t2i-live-join:focus-visible{outline:3px solid #fff;outline-offset:5px}
+html body .t2i-live-home .t2i-home-partners{margin:0 auto;padding:clamp(52px,8vw,100px) 20px;background:#111015;color:#fff}
+html body .t2i-live-home .t2i-home-partners :is(h2,h3,p,strong){color:#fff!important}
+html body .t2i-live-home .t2i-home-partners :is(.t2i-home-partners-heading>p,.t2i-home-partners-bottom>span){color:#e6cad8!important}
+html body .t2i-live-home .t2i-home-partners .t2i-home-partner{border-radius:20px!important;overflow:hidden}
+html body .t2i-live-home .t2i-home-partners .t2i-home-partner-footer strong{color:#291924!important}
+html body .marketing-footer .footer-cta{border-radius:999px!important}
+html body .t2i-live-inline-cta{display:inline-flex;align-items:center;gap:9px;border-radius:999px!important;padding:15px 24px!important}
+@media(max-width:600px){html body .t2i-live-hero{min-height:68vh;padding:120px 20px}html body .t2i-live-hero h1{font-size:clamp(44px,11.4vw,68px)!important;letter-spacing:-.055em!important}}

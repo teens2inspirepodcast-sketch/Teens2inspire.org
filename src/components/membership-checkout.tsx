@@ -41,7 +41,7 @@ export function MembershipCheckout({
         typeof data.url !== "string" ||
         !data.url.startsWith("https://checkout.stripe.com/")
       ) {
-        throw new Error("Stripe did not return a valid secure checkout link.");
+        throw new Error("We could not open secure checkout. Please try again.");
       }
 
       window.location.assign(data.url);
