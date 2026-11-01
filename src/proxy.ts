@@ -29,6 +29,16 @@ export async function proxy(request: NextRequest) {
 
   const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
   const { pathname } = request.nextUrl;
+  // Temporary podcast landing: publicly linked editorial pages all resolve to
+  // the single homepage. Preserve account verification, payments, legal pages,
+  // protected admin and API endpoints so existing accounts remain functional.
+  const isMarketingSite = host !== "media.teens2inspire.org";
+  const hiddenMarketingRoutes = new Set(["/about", "/podcast", "/events", "/school", "/contact", "/app", "/explore", "/search", "/library", "/profile"]);
+  if (isMarketingSite && hiddenMarketingRoutes.has(pathname)) {
+    const redirected = NextResponse.redirect(new URL("/", request.url));
+    response.cookies.getAll().forEach(cookie => redirected.cookies.set(cookie));
+    return redirected;
+  }
   if (host === "teens2inspire.org" && (pathname === "/app" || pathname.startsWith("/app/") || ["/explore", "/search", "/library", "/profile"].includes(pathname))) {
     const destination = new URL(`${pathname}${request.nextUrl.search}`, "https://media.teens2inspire.org");
     const redirected = NextResponse.redirect(destination);
