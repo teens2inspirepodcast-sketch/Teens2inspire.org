@@ -73,6 +73,26 @@ export async function Home() {
           </div>
         </div>
       </section>
+      <section className="t2i-home-phones" aria-labelledby="t2i-home-phones-title">
+        <div className="t2i-home-phones-copy">
+          <span className="t2i-home-section-label">YOUR INSPIRATION, YOUR WAY</span>
+          <h2 id="t2i-home-phones-title">A whole world of inspiration. Right in your pocket.</h2>
+          <p>Explore thoughtful videos, podcasts, articles, and personal favorites, all in one simple, beautifully organized space.</p>
+          <Link href="/signup" className="t2i-home-text-link">Discover Teens2Inspire <ArrowUpRight size={18}/></Link>
+        </div>
+        <div className="t2i-phone-stage" aria-label="Teens2Inspire media app phone previews">
+          <div className="t2i-phone-frame t2i-phone-secondary"><div className="t2i-phone-camera"/>
+            {settings.home_mockup_secondary_url && /^https:\/\//.test(settings.home_mockup_secondary_url)
+              ? <img className="t2i-phone-image" src={settings.home_mockup_secondary_url} alt="Teens2Inspire media app screen"/>
+              : <div className="t2i-phone-placeholder"><strong>Listen & grow.</strong><span>DISCOVER • SAVE • ENJOY</span><div className="t2i-phone-song"/><div className="t2i-phone-song"/><div className="t2i-phone-song"/></div>}
+          </div>
+          <div className="t2i-phone-frame t2i-phone-primary"><div className="t2i-phone-camera"/>
+            {settings.home_mockup_primary_url && /^https:\/\//.test(settings.home_mockup_primary_url)
+              ? <img className="t2i-phone-image" src={settings.home_mockup_primary_url} alt="Teens2Inspire media app homepage"/>
+              : <div className="t2i-phone-placeholder t2i-phone-placeholder-main"><Image src="/teens2inspire-logo.png" alt="Teens2Inspire" width={215} height={66}/><span>WATCH • LISTEN • READ • GROW</span><div className="t2i-phone-feature"><strong>Made for your moments.</strong></div><div className="t2i-phone-song"/><div className="t2i-phone-song"/></div>}
+          </div>
+        </div>
+      </section>
       <section className="t2i-home-join-story" aria-labelledby="t2i-home-join-title">
         <div className="t2i-home-join-story-inner">
           <span className="t2i-home-section-label">ONE THOUGHTFUL SPACE</span>

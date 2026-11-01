@@ -27,7 +27,6 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
     const plan = initialPlan || selectedPlan();
     const schoolCode = String(new FormData(e.currentTarget).get("school-code") || "").trim();
     const discountCode = String(new FormData(e.currentTarget).get("discount-code") || "").trim();
-    const membershipPath = plan ? `/membership?plan=${plan}` : "/membership";
     if (mode === "signup" && plan === "school" && !schoolCode) {
       setMsg("Enter the school access code provided by your school.");
       setBusy(false);
@@ -41,7 +40,7 @@ export function AuthForm({ mode, initialPlan = null }: { mode: "signup" | "login
         const marketingOrigin =
           process.env.NEXT_PUBLIC_MARKETING_URL || "https://teens2inspire.org";
         const callback = new URL("/auth/callback", marketingOrigin);
-        callback.searchParams.set("next", plan === "school" && schoolCode ? `/school?redeemCode=${encodeURIComponent(schoolCode)}` : membershipPath);
+        callback.searchParams.set("next", plan === "school" && schoolCode ? `/school?redeemCode=${encodeURIComponent(schoolCode)}` : "/email-verified");
 
         const ageConfirmed = form.get("age-13plus") === "on";
         if (!ageConfirmed) {

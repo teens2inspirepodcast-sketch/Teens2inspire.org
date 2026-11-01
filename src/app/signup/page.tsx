@@ -67,7 +67,7 @@ export default async function Signup({
 
           <div className="form auth-form"><AuthForm mode="signup" initialPlan={selectedPlan} /></div>
           <p className="auth-fineprint">
-            Paid membership starts after payment confirmation. You may be asked to verify your email address.
+            After secure checkout, check your email for a verification link. You’ll need to verify your email before signing in. Your membership starts after payment confirmation.
           </p>
         </section>
       </main>

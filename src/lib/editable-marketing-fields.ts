@@ -12,6 +12,8 @@ export const EDITABLE_MARKETING_FIELDS = {
   home_feature_values_body: { label: "Benefit 4 — description", help: "Describe the audience and topics the app serves.", multiline: true, image: false },
   home_join_title: { label: "Homepage — closing invitation", help: "Headline before the closing Join Us button.", multiline: false, image: false },
   home_join_description: { label: "Homepage — invitation description", help: "Helpful sentence about joining, family membership, or school access.", multiline: true, image: false },
+  home_mockup_primary_url: { label: "Mock-up pictures — main phone", help: "Upload the media app screen image for the front phone on the homepage.", multiline: false, image: true },
+  home_mockup_secondary_url: { label: "Mock-up pictures — second phone", help: "Upload a second app screenshot for the phone behind it.", multiline: false, image: true },
   brand_logo_url: { label: "Teens2Inspire brand logo", help: "The logo used in the main website and media-app header. Transparent PNG is recommended.", multiline: false, image: true },
   footer_tagline: { label: "Website footer tagline", help: "Short note next to the logo.", multiline: true, image: false },
   mission_title: { label: "Mission headline", help: "The title of the About page mission section.", multiline: false, image: false },

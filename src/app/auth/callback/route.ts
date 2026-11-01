@@ -5,12 +5,12 @@ import { createClient } from "@/lib/supabase/server";
 const MEDIA_ORIGIN = process.env.NEXT_PUBLIC_MEDIA_URL || "https://media.teens2inspire.org";
 
 function safeNext(rawNext: string | null): string {
-  const fallback = "/membership";
+  const fallback = "/email-verified";
   if (!rawNext || !rawNext.startsWith("/") || rawNext.startsWith("//")) return fallback;
   try {
     const parsed = new URL(rawNext, "https://teens2inspire.org");
     if (parsed.origin !== "https://teens2inspire.org") return fallback;
-    if (parsed.pathname === "/app" || parsed.pathname === "/") return fallback;
+    if (parsed.pathname === "/app" || parsed.pathname === "/" || parsed.pathname === "/membership") return fallback;
     return `${parsed.pathname}${parsed.search}${parsed.hash}`;
   } catch {
     return fallback;
@@ -60,6 +60,13 @@ export async function GET(request: Request) {
 }
 
 function verificationError(origin: string, next: string) {
+  // A failed paid-account confirmation should not send unverified members
+  // straight into a sign-in flow that cannot yet accept them.
+  if (!next.startsWith("/school")) {
+    const failed = new URL("/check-email", origin);
+    failed.searchParams.set("error", "verification");
+    return NextResponse.redirect(failed);
+  }
   const failed = new URL("/login", origin);
   failed.searchParams.set("error", "verification");
   failed.searchParams.set("next", next);

@@ -1,21 +1,31 @@
 import { Page } from "@/components/site";
 import { MembershipCheckout } from "@/components/membership-checkout";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Membership({
   searchParams,
 }: {
-  searchParams: Promise<{ checkout?: string; plan?: string; autoCheckout?: string }>
+  searchParams: Promise<{ checkout?: string; plan?: string; autoCheckout?: string }>;
 }) {
   const params = await searchParams;
 
+  // The existing Stripe Edge Function returns to this URL after checkout.
+  // An unconfirmed signup cannot sign in yet, so explain verification first.
+  // Keep the Edge Function, prices, webhooks, and Stripe session creation unchanged.
+  if (params.checkout === "success") {
+    // Existing, already-verified members can proceed directly to sign-in.
+    // Newly created accounts normally have no authenticated session until
+    // they follow their verification email, so they see the check-email page.
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email_confirmed_at) redirect("/email-verified?from=checkout");
+    redirect("/check-email?from=checkout");
+  }
+
   return (
     <Page title="A little more inspiration, all in one place.">
-      {params.checkout === "success" && (
-        <p className="notice" role="status">
-          Thank you. Once your payment is confirmed, your membership will be available. You can then <Link href="/login">sign in</Link> to start enjoying Teens2Inspire. If access does not update shortly, please contact support.
-        </p>
-      )}
       {params.checkout === "cancelled" && (
         <p className="notice" role="status">
           Checkout was cancelled. You have not completed a membership purchase.
@@ -46,6 +56,7 @@ export default async function Membership({
       </div>
       <p className="notice">
         Payments are processed securely. Paid access begins after successful payment confirmation.
+        New members must also verify their email before signing in.
       </p>
     </Page>
   );

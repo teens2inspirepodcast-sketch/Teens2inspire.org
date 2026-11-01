@@ -1,40 +1,34 @@
-# Teens2Inspire — Website 24Six-inspired streaming design
+# Teens2Inspire.org — November 1, 2026 email-verification checkout fix
 
-PATCH PACKAGE — **not a standalone project**.
+This ZIP contains the **full latest website source**, based on `Teens2Inspire-Website-Podcast-Mockups-Popup-2026-11-01.zip`, with the paid-signup flow corrected. It is **not** a media-app deployment.
 
-## Exact base
-Apply to the existing Next.js repository whose previous snapshot matches `Teens2Inspire-Website-Editorial-Redesign-Popup-2026-10-27.zip`. Do not replace an unrelated project or apply to the wrong domain.
+## What changes
 
-## Install
-1. Back up and commit your existing repository.
-2. Extract this ZIP into the ROOT of the matching repository (where `package.json` is), preserving `src/` directory structure and overwriting the changed files.
-3. Keep your current `.env` files and production variables. The patch contains no `.env` file.
-4. Run `npm install`, `npm run lint` and `npm run build` from the repo root, then test locally/staging.
-5. Commit and deploy the site through its existing Vercel project after manual review.
+1. Stripe continues using the existing success return URL `/membership?checkout=success`; the website now routes unverified signups to `/check-email?from=checkout` instead of presenting a login link prematurely. Already verified signed-in users can proceed directly.
+2. `/check-email` clearly explains how to verify, offers a resend-verification option, and includes the media-app sign-in link for verified members.
+3. New signup confirmation links lead to `/email-verified`, where users are told to **sign in**, not register or pay again. Older emailed links aimed at `/membership` are also handled by the callback.
+4. Expired or invalid paid-account verification links go to the check-email page rather than an unhelpful login redirect.
+5. The signup page explains email confirmation before checkout.
 
-## What is included
-- New centered minimalist streaming homepage: black/white/pink, rounded primary and outlined buttons.
-- Existing mobile hamburger header remains functional.
-- New app mockup and horizontally scrolling real published Supabase content previews.
-- Membership tier links, school routes, auth routes, pop-up widget and /admin/popup retained.
-- Existing checkout, webhook, auth, CMS and Supabase modules are untouched.
+No Stripe Edge Function, webhook, membership database, pricing, credentials, or media-app functions have been changed. The check-email page does **not** assert that a payment succeeded solely because a URL was visited: payment activation still depends on the existing webhook.
 
-## What is NOT changed
-- No edits to `src/lib/supabase/`, Supabase Edge Functions, database migrations, Stripe prices/checkout/webhook, API routes, R2 keys/credentials, school codes or account data.
-- Existing functionality and API contracts are reused. The new client player changes only the playback UI/lifecycle.
+## Deployment
 
-## Manual acceptance tests (not yet completed)
-1. Visit the homepage on desktop, tablet and phone; check nav/mobile menu and text contrast.
-2. Check published content thumbnails/links render; if there is no public readable content, an honest empty state appears.
-3. Test membership signup, personal/family Stripe checkout, school code and login.
-4. Enable the announcement at /admin/popup; verify it appears, dismisses, and admin-only uploads work.
+1. Back up and commit the current **Teens2Inspire.org** repository before replacing files.
+2. Unzip to the repository root (the folder containing `package.json`). Preserve existing environment settings.
+3. Run `npm install`, `npm run lint` and `npm run build` in the actual repository or Vercel CI.
+4. Deploy the website only after testing the flows below. Do not upload website files to the media-app repository.
 
-## Validation
-- All TypeScript/TSX source files parsed locally with TypeScript; no syntax errors.
-- Both CSS files parsed with PostCSS; no syntax errors.
-- The source files were diffed against the base ZIP.
-- `npm install --offline` was attempted but failed (dependencies not cached). A full Next.js production build, visual QA and live end-to-end testing are **not completed**.
-- No live GitHub or Vercel deployment performed.
+## Acceptance checks (required on a staging deployment)
 
-## Applying alongside the other patch
-Deploy website and media app to their SEPARATE repositories. Never mix the folders.
+- New paid signup with unverified email → Stripe test checkout → `/check-email` with instructions, not login.
+- Open the verification email → `/email-verified` → sign into the media app with the existing email/password.
+- Use an already expired confirmation link → helpful recovery message and resend function.
+- Verified existing account → normal sign-in/checkout behavior.
+- Cancel Stripe checkout → membership screen still displays cancellation notice.
+- School code signup and redemption flows still work.
+- Verify payment webhook updates the active membership; this ZIP does not change payment confirmation rules.
+
+## Verification status
+
+Updated TypeScript/TSX sources pass local syntax transpilation; new CSS passes parsing. Full Next.js build, browser integration checks, live email delivery and Stripe test checkout are **not yet completed**. No live Vercel deployment was made in this task.
